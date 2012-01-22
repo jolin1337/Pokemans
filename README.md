@@ -1,8 +1,8 @@
 #Pokémans
 
-*This is a school project!
+##About the project
+*A school project
+*Based on Pokémon
 
-#About the project
-
-#About us
+##About us
 * Three students from GTG
