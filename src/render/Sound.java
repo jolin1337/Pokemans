@@ -14,7 +14,7 @@ import projekt.Menu;
  *
  * @author johannes
  */
-public class sound {
+public class Sound {
 	public static synchronized void playSound(final String url) {
 		new Thread(new Runnable() {
 			public void run() {
