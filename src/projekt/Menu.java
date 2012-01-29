@@ -47,7 +47,7 @@ public class Menu extends Render {
     boolean fullscreenError = false;
 
     Menu(JFrame reff) {
-        requestFocus();
+        setFocusable(false);
         ref = reff;
         //super("Pokemans - Menu");
         init();
@@ -179,6 +179,10 @@ public class Menu extends Render {
                     }
                 }
                 if (eHandle.previus != -1) {
+                    if (eHandle.previus == Keys.up || eHandle.previus == Keys.down || eHandle.previus == Keys.left || eHandle.previus == Keys.right || eHandle.previus == Keys.a || eHandle.previus == Keys.b
+                            || eHandle.previus == KeyEvent.VK_W || eHandle.previus == KeyEvent.VK_D || eHandle.previus == KeyEvent.VK_S || eHandle.previus == KeyEvent.VK_A) {
+                        return;
+                    }
                     switch (controll) {
                         case 0:				//up key
                             Keys.up = eHandle.previus;
