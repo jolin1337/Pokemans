@@ -35,7 +35,7 @@ public class Game extends Render {
         focus = new Player(15, 17);
         focus.setChar("/res/CharMain/firehero.png");
         this.world = new World(this.getClass().getResource("/res/worlds/world1").getPath());
-        Sound.playSound("/res/sounds/teleporter.wav");
+        Sound.playSound("teleporter.wav");
         focus.setOnWalkCallback(new OnWalkCallback() {
 
             public boolean onWalk() {

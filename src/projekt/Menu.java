@@ -26,8 +26,6 @@ public class Menu extends Render {
     //(Quit)
 
     private final int WIDTH = 405, HEIGHT = 405;
-    Image dbImage;
-    Graphics dbg;
     Canvas can = new Canvas();
     Game proj = new Game();
     ImageIcon img;
@@ -39,9 +37,7 @@ public class Menu extends Render {
     private int innerMax = 0;
     int controll = -1;
     int incr = 10;
-    private EventHandler eHandle = new EventHandler();
     private int exit = 0;
-    Runner game = null;
     boolean gameStarted = false;
     JFrame ref = null;
     boolean fullscreenError = false;

@@ -3,12 +3,9 @@ package render;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import javax.swing.ImageIcon;
 import primitives.House;
 import projekt.event.Keys;
@@ -65,6 +62,7 @@ public class World implements Cloneable {
         System.out.println("Loading...");
 
         this.loadWorld();
+        System.out.println("Done!");
     }
 
     World copy() throws CloneNotSupportedException {
@@ -72,8 +70,8 @@ public class World implements Cloneable {
     }
 
     private void loadWorld() {
-        ImageIcon temp = null;
-        Graphics gr = null;
+        ImageIcon temp;
+        Graphics gr;
         Keys.status = "Loading world";
         System.out.println(this.path + "layout loaded.");
         this.layout = new ImageIcon(this.path + "/layout.png");
@@ -88,7 +86,7 @@ public class World implements Cloneable {
 
         System.out.println("alpha loaded.");
         temp = new ImageIcon(this.path + "/alpha.png");
-        System.out.print(temp);
+        //System.out.println(temp.toString());
         this.alpha = new BufferedImage(temp.getIconWidth(), temp.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         gr = this.alpha.getGraphics();
         gr.drawImage(temp.getImage(), 0, 0, null);
@@ -314,28 +312,5 @@ public class World implements Cloneable {
         g.drawImage(this.overlay.getImage(), 0, 0, null);
         drawPlayers(g, (int) y2, true);
         ((Graphics2D) g).setTransform(a);
-    }
-
-    void paint3D(Graphics g, int x2, int y2, int width, int height) {
-        Graphics2D g2 = ((Graphics2D) g);
-        AffineTransform t = g2.getTransform();
-        int w = 100, d = 200, h = 50;
-        int x = -x2 + width / 2, y = -y2 + height / 2;
-
-        g.drawRect(x, y, w, h);
-
-        g2.translate(x, y);
-        g2.scale(-((double) x2 - w / 2) / (double) width, 1);
-        g2.shear(0, 0.5);
-        g.drawRect(0, 0, d, h);
-        g2.setTransform(t);
-
-        g.drawRect((int) (x - (d * ((double) x2 - w / 2)) / (double) width), y + d / 2, w, h);
-
-        g2.translate(x + w, y);
-        g2.scale(-((double) x2 - w / 2) / (double) width, 1);
-        g2.shear(0, 0.5);
-        g.drawRect(0, 0, d, h);
-        g2.setTransform(t);
     }
 }
