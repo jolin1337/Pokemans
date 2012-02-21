@@ -6,8 +6,9 @@ import java.awt.Font;
 import javax.swing.JFrame;
 import projekt.event.Keys;
 import render.Battle;
-import render.Player;
 import render.Game;
+import render.Player;
+import render.Sound;
 
 /**
  * Runner, spelets loop. Runner är klassen som loopar igenom spelet och anropar
@@ -66,6 +67,8 @@ public class Runner extends JFrame implements Runnable {
         setMaximumSize(size);
 
         menurender = new Menu(this);
+        Sound.stopSound(0);
+        Sound.playSound("teleporter.wav");
         game = new Game();
         game.ins = getInsets();
         boss = new Player(10, 17);
@@ -236,8 +239,7 @@ public class Runner extends JFrame implements Runnable {
             menu = false;
             game.setVisible(true);
             menurender.setVisible(false);
-            //remove(menurender);
-            //add(game);
+            Sound.stopSound(0);
         } else if (keys[Keys.esc] && !menu) {
             menu = true;
 

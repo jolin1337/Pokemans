@@ -34,8 +34,8 @@ public class Game extends Render {
     public Game() {
         focus = new Player(15, 17);
         focus.setChar("/res/CharMain/firehero.png");
-        this.world = new World(this.getClass().getResource("/res/worlds/world1").getPath());
-        Sound.playSound("teleporter.wav");
+        focus.name="Dud";
+        this.world = new World("/res/worlds/world1");
         focus.setOnWalkCallback(new OnWalkCallback() {
 
             public boolean onWalk() {
@@ -48,8 +48,11 @@ public class Game extends Render {
 
             public boolean onEndWalk() {
                 if (!Game.this.focus.action.isEmpty()) {
+                    if(Game.this.focus.action.equals("dialog-fight"))
+                        Game.this.fight = true;
                     Game.this.focus.freeze = false;
                     Game.this.focus.action = "";
+                    
                 }
                 return true;
             }
@@ -177,12 +180,14 @@ public class Game extends Render {
         }
         Color temp;
         try {
-            temp = this.world.getRGBA((int) this.focus.x2 / radius + x, (int) this.focus.y2 / radius + y);
+            x=(int) this.focus.x2 / radius + x;
+            y=(int) this.focus.y2 / radius + y;
+            temp = this.world.getRGBA(x,y);
         } catch (java.lang.ArrayIndexOutOfBoundsException e) {
             // plockar upp något utanför banans kanter
             return false;
         }
-        if (temp.getRed() == 255
+        if (temp.getRed() == 0 && !this.world.isPoortal(x,y) && !this.world.isWorldRise(x, y)
                 && !(temp.equals(new Color(0xff000000)) || temp.equals(new Color(0xffffffff)))) {
             if (Dialogs.endof && !pickNow) {
                 this.focus.action = "dialog";
@@ -194,28 +199,28 @@ public class Game extends Render {
             }
             Graphics2D ag = this.world.alpha.createGraphics();
             ag.setColor(Color.white);
-            ag.fillRect((int) this.focus.x2 / radius + x, (int) this.focus.y2 / radius + y, 1, 1);
+            ag.fillRect(x, y, 1, 1);
 
             ag = this.world.items.createGraphics();
             AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f);
             Composite c = ag.getComposite();
             ag.setComposite(composite);
             ag.setColor(new Color(0, 0, 0, 0));
-            ag.fillRect(((int) this.focus.x2 + x * radius), ((int) this.focus.y2 + y * radius) - 8, radius, 20);
+            ag.fillRect(((int) this.focus.x2 + (int)(x - this.focus.x2/radius) * radius), ((int) this.focus.y2 + (int)(y - this.focus.y2/radius) * radius) - 8, radius, 20);
             ag.setComposite(c);
             int b = temp.getBlue();
             if (b != 0) {
                 this.focus.addItem(b);
             }
             return true;
-        } else if (temp.getBlue() == 255
+        } else if (temp.getRed() != 0 && !this.world.isPoortal(x,y) && !this.world.isWorldRise(x, y)
                 && !(temp.equals(new Color(0xff000000)) || temp.equals(new Color(0xffffffff)))) {		// omPlayer
             if (Dialogs.endof && !pickNow) {
-                this.focus.action = "dialog";
+                this.focus.action = "dialog-fight";
                 Dialogs.initDialog(Dialogs.Begin.TALK);
                 this.focus.freeze = true;
                 Player cur = world.players.get(0);
-                fight = true;
+                //fight = true;
                 if (cur.x > focus.x) {
                     cur.direciton = 1;//Vänster
                 } else if (cur.x != focus.x) {
@@ -269,7 +274,7 @@ public class Game extends Render {
         world.paintTop(g, (int) this.focus.x2, (int) this.focus.y2, WIDTH, HEIGHT);
         //drawShadowWithString("Version: \u03B1 0.5", 2, 12, Color.white, new Color(0x666666));
         //new PFont("Alpha - version 0.5", g, 2, 12);
-        if (this.focus.action.equals("dialog")) {
+        if (this.focus.action.startsWith("dialog")) {
             g.setColor(new Color(0x666666));
             //g.setFont(new Font("Lucida Typewriter Regular", Font.BOLD, 12));
             try {
@@ -283,19 +288,19 @@ public class Game extends Render {
             }
             tr.transition(g);
         }
-        focus.freeze = focus.action.equals("dialog") || tr.index > 0;//tr.index>0;
+        focus.freeze = focus.action.startsWith("dialog") || tr.index > 0;
     }
 
     public void drawDialog(String message) {
         int b = 5;
         int m = 8;
-        int y = this.getHeight() / 4;
-        this.dbg.fillRect(0, y * 3, WIDTH, y + HEIGHT % 4);
+        int y = HEIGHT / 4;
+        this.dbg.fillRect(0, y * 3, WIDTH, y );
         this.dbg.setColor(Color.black);
-        this.dbg.drawRect(b, y * 3 + b, WIDTH - 2 * b, y + HEIGHT % 4 - 2 * b);
+        this.dbg.drawRect(b, y * 3 + b, WIDTH - 3 * b, y - 7 * b );
 
         this.dbg.setFont(new Font(Font.DIALOG, Font.BOLD, 10));
-        String[] lines = message.split("\n");
+        //String[] lines = message.split("\n");
         /*
          * for (int i = 0; i < lines.length; i++) { FontMetrics fm =
          * this.getFontMetrics(this.dbg.getFont()); int width =

@@ -1,12 +1,16 @@
 package projekt;
 
-import javax.swing.JFrame;
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
-import projekt.event.*;
-import render.PFont;
+import javax.swing.JFrame;
+import projekt.event.EventHandler;
+import projekt.event.Keys;
 import render.Game;
+import render.PFont;
 import render.Render;
 
 /**
@@ -92,7 +96,7 @@ public class Menu extends Render {
         if (controll == -1) {			// 
             if (eHandle.keys[KeyEvent.VK_ESCAPE]) // om escape är nertryckt
             {
-                if (lvl == 0 && exit == 0) {							// om du är högst upp i hirearkin så stänger vi programmet, typ
+                if (lvl == 0 && exit == 0) {    // om du är högst upp i hirearkin så stänger vi programmet, typ
                     exit = 1;
                     exitCode = 1;
                 } else {											//annars så går vi upp i hirearkin
@@ -119,13 +123,7 @@ public class Menu extends Render {
             } else if (eHandle.keys[Keys.a] && lvl == 0) {					//
                 lvl += step;
                 if (lvl == 0) {
-                    //exit=1;
-                    //eHandle.keys[Keys.a]=false;
-                    //game=new Runner();
-                    //game.game.focus.incr=(double)incr/10;
-                    //exit=1;
                     gameStarted = true;
-                    //game.game.exitCode==
                 }
             } else if (eHandle.keys[Keys.b]) {
                 lvl = 0;
@@ -162,6 +160,7 @@ public class Menu extends Render {
                 incr = 5;
             }
         }
+        // Configure the controls 
         if (lvl != 0 && (eHandle.keys[Keys.a]) || (controll >= 0 && controll <= 6)) {
             if (innerStep == 1 || (controll >= 0 && controll <= 6)) {
                 if (eHandle.keys[Keys.a] || eHandle.keys[KeyEvent.VK_ESCAPE]) {
@@ -218,6 +217,9 @@ public class Menu extends Render {
     @Override
     public void paint(Graphics g) {
         if (exit != 1 && !gameStarted) {
+            g.setColor(new Color(0x00000000));
+            int x = 30, y = 200;
+            g.fillRect(x - 25 - 4, y - 20 - 4, 340 + 8, 120 + 8);
             proj.paint(g);
             g.setColor(new Color(0xFFFDD0));
             //g.fillRoundRect(2, 2, 400, 400, 25, 25);
@@ -229,7 +231,6 @@ public class Menu extends Render {
             g.drawImage(img.getImage(), 0, 0, WIDTH,
                     (int) (img.getIconHeight() * ((double) WIDTH / (double) img.getIconWidth())), null);
             pf.SetColor("green").PrintAt(g, 225, 120);
-            int x = 30, y = 200;
             if (lvl == 0) {
                 g.setColor(new Color(100, 100, 0, 100));
                 g.fillRect(x - 25 - 4, y - 20 - 4, 110 + 8, 120 + 8);

@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import primitives.House;
 import projekt.event.Keys;
@@ -55,14 +57,12 @@ public class World implements Cloneable {
         if (i == null) {
             throw new RuntimeException("The World is not defined");
         }
-        this.path = i;
         //sound.playSound("opening.mp3");
-        //if (getClass().getResource(i) == null) 
-        //	throw new RuntimeException("World,"+this.path+", does not exist!");
+        if (getClass().getResource(i) == null) 
+        	throw new RuntimeException("World,"+this.path+", does not exist!");
+        this.path = getClass().getResource(i).getPath();
         System.out.println("Loading...");
-
         this.loadWorld();
-        System.out.println("Done!");
     }
 
     World copy() throws CloneNotSupportedException {
@@ -96,19 +96,20 @@ public class World implements Cloneable {
         for (int ix = 0; ix < this.alpha.getWidth(); ix++) {
             for (int iy = 0; iy < this.alpha.getHeight(); iy++) {
                 int ixy = this.alpha.getRGB(ix, iy);
-                if (((ixy >>> 16) & 0xff) == 255 && !(ixy == 0xff000000 || ixy == 0xffffffff)
-                        && ((ixy >>> 8) & 0xff) * 20 + 20 < this.grafik.getWidth() && (ixy & 0xff) * radius + radius < this.grafik.getHeight()) {
-                    gr.drawImage(
-                            this.grafik.getSubimage(
-                            ((ixy >>> 8) & 0xff) * radius,
-                            (ixy & 0xff) * 20,
-                            radius, 20),
-                            ix * radius, iy * radius - 8, null);
-                } else if ((ixy & 0xff) == 255 && ixy != 0xffffffff) {
-                    Player p = new Player(ix, iy);
-                    p.setChar("/res/Players/player" + ((ixy >> 16) & 0xff) + ".png");
-                    p.lvl = ((ixy >> 8) & 0xff);
-                    players.add(p);
+                if( !isPoortal(ix, iy) && !isWorldRise(ix, iy) && ixy != 0xff000000 && ixy != 0xffffffff ) {
+                    if ( (( ixy >>> 16 ) & 0xff) == 0 && ((ixy >>> 8) & 0xff) * 20 + 20 < this.grafik.getWidth() && (ixy & 0xff) * radius + radius < this.grafik.getHeight()) {
+                        gr.drawImage(
+                                this.grafik.getSubimage(
+                                ((ixy >>> 8) & 0xff) * radius,
+                                (ixy & 0xff) * 20,
+                                radius, 20),
+                                ix * radius, iy * radius - 8, null);
+                    } else if ( (( ixy >>> 16 ) & 0xff) != 0 ) {
+                        Player p = new Player( ix, iy );
+                        p.setChar("/res/Players/player" + 0 + ".png");
+                        p.lvl = ((ixy >> 8) & 0xff);
+                        players.add(p);
+                    }
                 }
             }
         }
@@ -147,9 +148,10 @@ public class World implements Cloneable {
                 }
                 /**
                  * @TODO LÖS ITEM, PLAYERS SÅ ATT DE INTE KOLLIDERAR MED SAMMA
-                 * DATA!!! if (Color.RED = 255) new
-                 * Item(Color.C,Color.M,Color.GREEN,Color.BLUE); also: if
-                 * (Color.BLUE = 255) new Character(x,y,Color.RED,Color.GREEN);
+                 * DATA!!! if (Color.RED = 255) 
+                 *      new Item(Color.C,Color.M,Color.GREEN,Color.BLUE); 
+                 * also: if(Color.BLUE = 255) 
+                 *      new Character(x,y,Color.RED,Color.GREEN);
                  */
                 this.pos[0] = -1;
                 this.pos[1] = -1;
@@ -199,13 +201,20 @@ public class World implements Cloneable {
     }
 
     public boolean isPoortal(int x, int y) {
-        if (this.getRGBA(x, y).getRGB() != 0xffffffff && this.getRGBA(x, y).getRGB() != 0xff000000
-                && !this.isEqual(this.getRGBA(x, y).getRGB())) {
+        int rgb=this.getRGBA(x, y).getRGB();
+        if ( rgb != 0xffffffff && rgb != 0xff000000 && this.getRGBA(x, y).getAlpha() == 254 ) {
             this.pos[0] = this.getRGBA(x, y).getGreen();//x
             this.pos[1] = this.getRGBA(x, y).getBlue(); //y
             this.pos[2] = this.getRGBA(x, y).getRed();//world number
             return true;
         }
+        return false;
+    }
+    public boolean isWorldRise(int x, int y){
+        /*int rgb=this.getRGBA(x, y).getRGB();
+        if(!isPoortal(x, y) && this.getRGBA(x, y).getAlpha() != 255 &&
+                ((rgb >>> 16) & 0xff) == 0 && ((rgb >>> 8) & 0xff) == 0 && (rgb & 0xff) == 0)
+            return true;*/
         return false;
     }
 
