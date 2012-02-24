@@ -25,7 +25,7 @@ public class Runner extends JFrame implements Runnable {
     private static final int WIDTH = 405;
     private static final int HEIGHT = 405;
     private static final int SCALE = 1;
-    private boolean menu = true;
+    private boolean menu = false;
     private Menu menurender = null;
     private Battle fight = null;
     private static final String NAME = "POKEMANS";
@@ -68,7 +68,7 @@ public class Runner extends JFrame implements Runnable {
 
         menurender = new Menu(this);
         Sound.stopSound(0);
-        Sound.playSound("teleporter.wav");
+        Sound.playSound("hitros.wav");
         game = new Game();
         game.ins = getInsets();
         boss = new Player(10, 17);
@@ -169,7 +169,7 @@ public class Runner extends JFrame implements Runnable {
             if (ticked) {
 
                 game.screenCoords = getLocation();
-                if (menu) {
+                if (menu || menurender.story.running) {
                     menurender.render();
                 } else if (game.fight) {
                     fight.render();
@@ -222,7 +222,7 @@ public class Runner extends JFrame implements Runnable {
      * @param keys boolean[], alla keys som finns
      */
     private void eCheck(boolean[] keys) {
-        if (menu) {
+        if (menu || menurender.story.running) {
             menurender.event();
         } else if (game.fight) {
             fight.tick(keys);
@@ -235,11 +235,20 @@ public class Runner extends JFrame implements Runnable {
             fight.setVisible(true);
             menu = false;
         }
-        if (keys[Keys.a] && menurender.lvl == 0 && menurender.step == 0 && menu) {
-            menu = false;
-            game.setVisible(true);
-            menurender.setVisible(false);
-            Sound.stopSound(0);
+        if (keys[Keys.a] && menurender.lvl == 0 && menurender.step == 0 && !menurender.story.running) {
+            if( menu ){
+                menu = false;
+                game.setVisible(true);
+                menurender.setVisible(false);
+                Sound.stopSound(0);
+                Sound.playSound("hitros.wav");
+            }
+            else{
+                Sound.stopSound(0);
+                Sound.playSound("teleporter.wav");
+                menu = true;
+                keys[Keys.a] = false;
+            }
         } else if (keys[Keys.esc] && !menu) {
             menu = true;
 

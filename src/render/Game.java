@@ -246,7 +246,8 @@ public class Game extends Render {
     @Override
     public void paint(Graphics g) {
         if (tr == null) {
-            tr = new Transition("slideUpDown");
+            tr = new Transition();
+            tr.Speed = 6;
         }
         if ((focus.x * focus.radius != focus.x2)) {
             focus.slowMove(0);
@@ -286,7 +287,7 @@ public class Game extends Render {
             if (tr.dirBool) {
                 //dbg.drawImage(before, 0, 0, this);
             }
-            tr.transition(g);
+            tr.Transitions[Transition.Type.Fade].animate(g);
         }
         focus.freeze = focus.action.startsWith("dialog") || tr.index > 0;
     }
@@ -336,7 +337,7 @@ public class Game extends Render {
                 }
             } catch (AWTException ex) {
             }
-            tr.transition(dbg);
+            tr.Transitions[Transition.Type.Fade].animate(dbg);
         }
         if (loadWorld && tr.dirBool) {
             loadWorld = false;

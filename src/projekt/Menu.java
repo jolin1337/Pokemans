@@ -45,9 +45,10 @@ public class Menu extends Render {
     boolean gameStarted = false;
     JFrame ref = null;
     boolean fullscreenError = false;
+    Story story = new Story();
 
     Menu(JFrame reff) {
-        setFocusable(false);
+        //setFocusable(false);
         ref = reff;
         //super("Pokemans - Menu");
         init();
@@ -55,7 +56,8 @@ public class Menu extends Render {
 
     public final void init() {
         try {
-            ref.setTitle("Pokemans - Menu");
+            ref.setTitle("Pokemans - Story");
+            story.running = true;
 
             proj.removeKeyListener(proj.eHandle);
             java.awt.event.KeyListener[] keyl = null;
@@ -85,138 +87,148 @@ public class Menu extends Render {
     }
 
     public void event() {
-        if (eHandle.release) {			// gör så att man bara kan ta ett steg i taget
-            if (lvl == 0) // om du är på yttre menyn dvs inte options
-            {
-                diff = step;			// sätt diff till samma som nuvarande cur position
-            } else {
-                diff = innerStep;		// diff till samma som nuvarande cur position
+        if( !story.running ) {
+            if (eHandle.release) {			// gör så att man bara kan ta ett steg i taget
+                if (lvl == 0) // om du är på yttre menyn dvs inte options
+                {
+                    diff = step;			// sätt diff till samma som nuvarande cur position
+                } else {
+                    diff = innerStep;		// diff till samma som nuvarande cur position
+                }
             }
-        }
-        if (controll == -1) {			// 
-            if (eHandle.keys[KeyEvent.VK_ESCAPE]) // om escape är nertryckt
-            {
-                if (lvl == 0 && exit == 0) {    // om du är högst upp i hirearkin så stänger vi programmet, typ
-                    exit = 1;
-                    exitCode = 1;
-                } else {											//annars så går vi upp i hirearkin
-                    exit = 2;
+            if (controll == -1) {			// 
+                if (eHandle.keys[Keys.esc]) // om escape är nertryckt
+                {
+                    if (lvl == 0 && exit == 0) {    // om du är högst upp i hirearkin så stänger vi programmet, typ
+                        exit = 1;
+                        exitCode = 1;
+                    } else {											//annars så går vi upp i hirearkin
+                        exit = 2;
+                        lvl = 0;
+                        innerStep = 0;
+                    }
+                } else if (eHandle.keys[Keys.down] || eHandle.keys[KeyEvent.VK_S]) {	// om pil ner eller tangent S är nertryckt
+                    if (lvl == 0 && diff == step) // om om du är på lvl 0 och step är samma sak som diff
+                    {
+                        step++;									// gå ner i menyn
+                    } else if (diff == innerStep) // om du är inne i options
+                    {
+                        innerStep++;								// gå ner i options
+                    }
+                } else if (eHandle.keys[Keys.up] || eHandle.keys[KeyEvent.VK_W]) {	// om pil upp eller tangent W är nertryckt
+                    if (lvl == 0 && diff == step) // om lvl är 0 och diff är resettad
+                    {
+                        step--;									// går vi upp i menyn
+                    } else if (diff == innerStep) // om vi är inner i options
+                    {
+                        innerStep--;								// gå upp i menyn
+                    }
+                } else if (eHandle.keys[Keys.a] && lvl == 0) {					//
+                    lvl += step;
+                    if (lvl == 0) {
+                        gameStarted = true;
+                    }
+                } else if (eHandle.keys[Keys.b]) {
                     lvl = 0;
-                    innerStep = 0;
+                    fullscreenError = false;
                 }
-            } else if (eHandle.keys[Keys.down] || eHandle.keys[KeyEvent.VK_S]) {	// om pil ner eller tangent S är nertryckt
-                if (lvl == 0 && diff == step) // om om du är på lvl 0 och step är samma sak som diff
-                {
-                    step++;									// gå ner i menyn
-                } else if (diff == innerStep) // om du är inne i options
-                {
-                    innerStep++;								// gå ner i options
-                }
-            } else if (eHandle.keys[Keys.up] || eHandle.keys[KeyEvent.VK_W]) {	// om pil upp eller tangent W är nertryckt
-                if (lvl == 0 && diff == step) // om lvl är 0 och diff är resettad
-                {
-                    step--;									// går vi upp i menyn
-                } else if (diff == innerStep) // om vi är inner i options
-                {
-                    innerStep--;								// gå upp i menyn
-                }
-            } else if (eHandle.keys[Keys.a] && lvl == 0) {					//
-                lvl += step;
-                if (lvl == 0) {
-                    gameStarted = true;
-                }
-            } else if (eHandle.keys[Keys.b]) {
-                lvl = 0;
-                fullscreenError = false;
             }
-        }
-        if (step < 0) {
-            step = max;
-        } else if (step > max) {
-            step = 0;
-        }
-        if (innerStep < 0) {
-            innerStep = innerMax;
-        } else if (innerStep > innerMax) {
-            innerStep = 0;
-        }
-        if (eHandle.release) {
-            exit = 0;
-        }
+            if (step < 0) {
+                step = max;
+            } else if (step > max) {
+                step = 0;
+            }
+            if (innerStep < 0) {
+                innerStep = innerMax;
+            } else if (innerStep > innerMax) {
+                innerStep = 0;
+            }
+            if (eHandle.release) {
+                exit = 0;
+            }
 
-        if (innerStep == 2 && diff == 2 && lvl != 0) {
-            if (eHandle.keys[Keys.left]) {
-                incr--;
+            if (innerStep == 2 && diff == 2 && lvl != 0) {
+                if (eHandle.keys[Keys.left]) {
+                    incr--;
+                }
+                if (eHandle.keys[Keys.right]) {
+                    incr++;
+                }
+                eHandle.keys[Keys.right] = false;
+                eHandle.keys[Keys.left] = false;
+                if (incr > 10) {
+                    incr = 10;
+                }
+                if (incr < 5) {
+                    incr = 5;
+                }
             }
-            if (eHandle.keys[Keys.right]) {
-                incr++;
-            }
-            eHandle.keys[Keys.right] = false;
-            eHandle.keys[Keys.left] = false;
-            if (incr > 10) {
-                incr = 10;
-            }
-            if (incr < 5) {
-                incr = 5;
+            // Configure the controls 
+            if (lvl != 0 && (eHandle.keys[Keys.a]) || (controll >= 0 && controll <= 6)) {
+                if (innerStep == 1 || (controll >= 0 && controll <= 6)) {
+                    if (eHandle.keys[Keys.a] || eHandle.keys[KeyEvent.VK_ESCAPE]) {
+                        eHandle.previus = -1;
+                        eHandle.keys[Keys.a] = false;
+                        eHandle.keys[KeyEvent.VK_ESCAPE] = false;
+                        if (controll == -1) {
+                            controll = 0;
+                        } else {
+                            controll = -1;
+                        }
+                    }
+                    if (eHandle.previus != -1) {
+                        if (eHandle.previus == Keys.up || eHandle.previus == Keys.down || eHandle.previus == Keys.left || eHandle.previus == Keys.right || eHandle.previus == Keys.a || eHandle.previus == Keys.b
+                                || eHandle.previus == KeyEvent.VK_W || eHandle.previus == KeyEvent.VK_D || eHandle.previus == KeyEvent.VK_S || eHandle.previus == KeyEvent.VK_A) {
+                            return;
+                        }
+                        switch (controll) {
+                            case 0:				//up key
+                                Keys.up = eHandle.previus;
+                                controll++;
+                                break;
+                            case 1:				//Left key
+                                Keys.left = eHandle.previus;
+                                controll++;
+                                break;
+                            case 2:				//Down key
+                                Keys.down = eHandle.previus;
+                                controll++;
+                                break;
+                            case 3:				//Right key
+                                Keys.right = eHandle.previus;
+                                controll++;
+                                break;
+                            case 4:				//A key
+                                Keys.a = eHandle.previus;
+                                eHandle.keys[Keys.a] = false;
+                                controll++;
+                                break;
+                            case 5:				//B key
+                                Keys.b = eHandle.previus;
+                                eHandle.keys[Keys.b] = false;
+                                controll = -1;
+                                break;
+                        }
+                        eHandle.previus = -1;
+                    }
+                } else if (innerStep == 0 && diff == 0) {
+                    fullscreenError = true;
+                }
             }
         }
-        // Configure the controls 
-        if (lvl != 0 && (eHandle.keys[Keys.a]) || (controll >= 0 && controll <= 6)) {
-            if (innerStep == 1 || (controll >= 0 && controll <= 6)) {
-                if (eHandle.keys[Keys.a] || eHandle.keys[KeyEvent.VK_ESCAPE]) {
-                    eHandle.previus = -1;
-                    eHandle.keys[Keys.a] = false;
-                    eHandle.keys[KeyEvent.VK_ESCAPE] = false;
-                    if (controll == -1) {
-                        controll = 0;
-                    } else {
-                        controll = -1;
-                    }
-                }
-                if (eHandle.previus != -1) {
-                    if (eHandle.previus == Keys.up || eHandle.previus == Keys.down || eHandle.previus == Keys.left || eHandle.previus == Keys.right || eHandle.previus == Keys.a || eHandle.previus == Keys.b
-                            || eHandle.previus == KeyEvent.VK_W || eHandle.previus == KeyEvent.VK_D || eHandle.previus == KeyEvent.VK_S || eHandle.previus == KeyEvent.VK_A) {
-                        return;
-                    }
-                    switch (controll) {
-                        case 0:				//up key
-                            Keys.up = eHandle.previus;
-                            controll++;
-                            break;
-                        case 1:				//Left key
-                            Keys.left = eHandle.previus;
-                            controll++;
-                            break;
-                        case 2:				//Down key
-                            Keys.down = eHandle.previus;
-                            controll++;
-                            break;
-                        case 3:				//Right key
-                            Keys.right = eHandle.previus;
-                            controll++;
-                            break;
-                        case 4:				//A key
-                            Keys.a = eHandle.previus;
-                            eHandle.keys[Keys.a] = false;
-                            controll++;
-                            break;
-                        case 5:				//B key
-                            Keys.b = eHandle.previus;
-                            eHandle.keys[Keys.b] = false;
-                            controll = -1;
-                            break;
-                    }
-                    eHandle.previus = -1;
-                }
-            } else if (innerStep == 0 && diff == 0) {
-                fullscreenError = true;
+        else{
+            if(eHandle.keys[Keys.esc]){
+                exit = 1;
+                exitCode = 1;
             }
+            story.tick(eHandle.keys);
         }
     }
 
     @Override
     public void paint(Graphics g) {
-        if (exit != 1 && !gameStarted) {
+        if (exit != 1 && !gameStarted && !story.running ) {
+            g.clearRect(0, 0, WIDTH, HEIGHT);
             g.setColor(new Color(0x00000000));
             int x = 30, y = 200;
             g.fillRect(x - 25 - 4, y - 20 - 4, 340 + 8, 120 + 8);
@@ -281,11 +293,11 @@ public class Menu extends Render {
                         pf.SetString(" - " + (double) incr / 10).PrintAt(g, x + 65, y + 60);
                     }
                 }
-            } else if (lvl == 3) {
+            } else if ( lvl == 3 ) {
                 exit = 1;
                 exitCode = 1;
             }
-            g.setColor(new Color(0x000080));
+            g.setColor( new Color(0x000080) );
             //x=20;
             //y=60;
             int offX = 20;
@@ -296,8 +308,8 @@ public class Menu extends Render {
                 g.fillPolygon(new int[]{x - offX, x - offX + 5, x - offX}, new int[]{y + innerStep * dist + 20, y + 5 + innerStep * dist + 20, y + 10 + innerStep * dist + 20}, 3);
             }
         } else {
-            g.fillRect(0, 0, WIDTH, HEIGHT);
+            story.paint(g);
         }
-
+        
     }
 }
