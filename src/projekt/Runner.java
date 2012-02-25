@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import javax.swing.JFrame;
+import projekt.event.Dialogs;
 import projekt.event.Keys;
 import render.Battle;
 import render.Game;
@@ -67,7 +68,7 @@ public class Runner extends JFrame implements Runnable {
         setMaximumSize(size);
 
         menurender = new Menu(this);
-        Sound.stopSound(0);
+        Sound.stopAllSound();
         Sound.playSound("hitros.wav");
         game = new Game();
         game.ins = getInsets();
@@ -229,25 +230,30 @@ public class Runner extends JFrame implements Runnable {
         } else {
             game.tick(keys);
         }
-        if (game.fight) {
+        if (game.fight ) {
             game.setVisible(false);
             menurender.setVisible(false);
             fight.setVisible(true);
             menu = false;
+            if(!Sound.sounds.get(0).getName().equals("teleporter.wav")){
+                Sound.stopAllSound();
+                Sound.playSound("teleporter.wav");
+            }
         }
-        if (keys[Keys.a] && menurender.lvl == 0 && menurender.step == 0 && !menurender.story.running) {
+        if (keys[Keys.a] && ( menurender.lvl == 0 && menurender.step == 0 ) && !menurender.story.running) {
             if( menu ){
                 menu = false;
                 game.setVisible(true);
                 menurender.setVisible(false);
-                Sound.stopSound(0);
+                Sound.stopAllSound();
                 Sound.playSound("hitros.wav");
             }
-            else{
-                Sound.stopSound(0);
+            else if( menurender.story.exitCode == 0 ){
+                Sound.stopAllSound();
                 Sound.playSound("teleporter.wav");
                 menu = true;
                 keys[Keys.a] = false;
+                menurender.story.exitCode = 1;
             }
         } else if (keys[Keys.esc] && !menu) {
             menu = true;

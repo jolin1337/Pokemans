@@ -14,8 +14,9 @@ import java.util.ArrayList;
  * @author johannes
  */
 public class Sound {
-    static ArrayList<Thread> sounds=new ArrayList<Thread>();
-    static ArrayList<Runnable> r=new ArrayList<Runnable>();
+    public static ArrayList<Thread> sounds=new ArrayList<Thread>();
+    public static ArrayList<Runnable> r=new ArrayList<Runnable>();
+    public static String args[] = null;
     public static synchronized void playSound(final String url) {
         r.add(new Runnable() {
             boolean runned=false;
@@ -30,30 +31,43 @@ public class Sound {
                         clip.open(inputStream);
                         clip.start();
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
-                        System.out.println(clip.getFrameLength());
+                        runned=true;
+                        return;
                     } catch (Exception e) {
-                        //System.err.println(e);
+                        runned=true;
                     }
-                    runned=true;
                 }
-                else{
-                    clip.loop(0);
+                if( args != null && args.length > 0 ){
+                    /** @FIXME add arguments here */
+                    return;
+                }
+
+                clip.loop(0);
+                /*if(Sound.sounds.get(index).getName().equals("hitros.wav")){
+                    clip.start();
                     clip.setFramePosition(clip.getFrameLength()-80000);
                     while(clip.isRunning());
-                    Sound.sounds.get(index).interrupt();
-                    Sound.sounds.remove(index);
-                }
+                }*/
+                clip.stop();
+                Sound.sounds.get(index).interrupt();
+                Sound.sounds.remove(index);
+                Sound.r.remove(index);
             }
         });
         sounds.add(new Thread( r.get(r.size()-1) ));
-        sounds.get(sounds.size()-1).setName("Sound number:"+sounds.size());
+        sounds.get(sounds.size()-1).setName(url);
         sounds.get(sounds.size()-1).start();
     }
 
     public static synchronized void stopSound(int index) {
-        if(sounds.size()>index){
+        if(sounds.size()>index && index >= 0){
             r.get(index).run();
             //sounds.remove(index);
         }
+    }
+
+    public static void stopAllSound() {
+        for(int i=0;i<sounds.size();i++)
+            stopSound(i);
     }
 }

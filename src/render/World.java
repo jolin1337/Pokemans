@@ -146,13 +146,6 @@ public class World implements Cloneable {
                 if (t.getIconWidth() > this.pos[0] + radius && t.getIconHeight() > this.pos[1] + radius) {
                     this.loadWorld();
                 }
-                /**
-                 * @TODO LÖS ITEM, PLAYERS SÅ ATT DE INTE KOLLIDERAR MED SAMMA
-                 * DATA!!! if (Color.RED = 255) 
-                 *      new Item(Color.C,Color.M,Color.GREEN,Color.BLUE); 
-                 * also: if(Color.BLUE = 255) 
-                 *      new Character(x,y,Color.RED,Color.GREEN);
-                 */
                 this.pos[0] = -1;
                 this.pos[1] = -1;
                 this.pos[2] = -1;
