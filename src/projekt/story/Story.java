@@ -1,18 +1,17 @@
-package projekt;
+package projekt.story;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import projekt.event.Dialogs;
 import projekt.event.EventHandler;
-import render.Render;
-import render.Transition;
 import projekt.event.Keys;
 import render.PFont;
-
+import render.Player;
+import render.Render;
+import render.Transition;
 /**
  * Denna klassen är en story som skall visas i början av spelet
  * spelaren får en övergripande blick på vem Dud är och vilka problem han måste möta
@@ -41,7 +40,7 @@ public class Story extends Render{
     /**
      * strings innehåller alla "sidor" av text
      */
-    public String[] strings = Dialogs.Begin.story1.split("\t");
+    public String[] strings = Dialogs.Story.story1.split("\t");
     /**
      * strings innehåller nuvarande "sida"
      */
@@ -52,6 +51,9 @@ public class Story extends Render{
      */
     public Transition t;
     
+    private Player dud = new Player(0,0);
+    private ImageIcon dudText = new ImageIcon(getClass().getResource("/res/intro/dud.png"));
+    
     /**
      * Template bilder för bakgrunden
      */
@@ -60,6 +62,9 @@ public class Story extends Render{
         new ImageIcon(getClass().getResource("/res/worlds/world11/layout.png")),
         new ImageIcon(getClass().getResource("/res/worlds/world187/layout.png"))
     };
+    
+    private DisplayPropsFromChar props = new DisplayPropsFromChar( "/res/CharMain/firehero.png", WIDTH /2 - 25, HEIGHT/2 );
+    
     /**
      * Konstruktorn för story
      * @param run - sätter om introt skall starta direkt?(true) eller inte?(false)
@@ -92,6 +97,11 @@ public class Story extends Render{
         running = true;
         currentString.setPreferedWidth(200);
         currentString.SetString(strings[step_in_story]);
+        
+        dud.setChar("/res/CharMain/firehero.png");
+        props.setName("DUD");
+        props.setDisplayName(dudText);
+        props.gameEnabled=false;
     }
     
     /**
@@ -105,7 +115,6 @@ public class Story extends Render{
         }
         if( keys[Keys.a] && step_in_story + 1 == strings.length){
             running = false;
-            keys[Keys.a] = false;
         }
     }
            
@@ -168,11 +177,9 @@ public class Story extends Render{
             }
         }
         else{
-            g.drawImage(img[step_in_story].getImage(), 0, 0, null);
-            g.setColor(new Color(0,0,0,200));
-            g.fillRect(0, 0, WIDTH, HEIGHT);
-            currentString.SetString(strings[step_in_story] + " ( An epic pic here! )");
-            currentString.PrintAt(g, WIDTH/3, HEIGHT/3);
+            g.drawImage(img[step_in_story].getImage(), WIDTH/2-img[step_in_story].getIconWidth()/2, HEIGHT/2-img[step_in_story].getIconHeight()/2, null);
+            
+            props.paint(g);
         }
     }
     

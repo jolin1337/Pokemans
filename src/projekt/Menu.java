@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import projekt.event.EventHandler;
 import projekt.event.Keys;
+import projekt.story.Story;
 import render.Game;
 import render.PFont;
 import render.Render;
@@ -29,6 +30,7 @@ public class Menu extends Render {
     //Backa till föregående meny
     //(Quit)
 
+    public static boolean Applet;
     private final int WIDTH = 405, HEIGHT = 405;
     Canvas can = new Canvas();
     Game proj = new Game();
@@ -43,31 +45,32 @@ public class Menu extends Render {
     int incr = 10;
     private int exit = 0;
     boolean gameStarted = false;
-    JFrame ref = null;
     boolean fullscreenError = false;
     Story story = new Story();
 
-    Menu(JFrame reff) {
-        //setFocusable(false);
-        ref = reff;
-        //super("Pokemans - Menu");
+    Menu() {
+        init();
+        setFocusable(false);
+    }
+    
+    Menu(boolean applet){
+        Applet = applet;
         init();
     }
 
     public final void init() {
         try {
-            ref.setTitle("Pokemans - Story");
             story.running = true;
 
-            proj.removeKeyListener(proj.eHandle);
-            java.awt.event.KeyListener[] keyl = null;
-            if ((keyl = ref.getKeyListeners()).length > 0) {
+            //proj.removeKeyListener(proj.eHandle);
+            //java.awt.event.KeyListener[] keyl = null;
+            /*if ((keyl = ref.getKeyListeners()).length > 0) {
                 eHandle = (EventHandler) keyl[0];
             } else {
                 ref.addKeyListener(eHandle);
-            }
-            addKeyListener(eHandle);
-            proj.addKeyListener(eHandle);
+            }*/
+            //addKeyListener(eHandle);
+            //proj.addKeyListener(eHandle);
             Color col = new Color(0, 0, 0, 0);
 
             img = new ImageIcon(getClass().getResource("/res/pokemans.png").getPath());
@@ -76,17 +79,13 @@ public class Menu extends Render {
 
             //add(proj);
             Dimension size = new Dimension(WIDTH, HEIGHT);
-            ref.setSize(size);
-            ref.setPreferredSize(size);
-            ref.setMinimumSize(size);
-            ref.setMaximumSize(size);
             dbImage = createImage(WIDTH, HEIGHT);
             dbg = dbImage.getGraphics();
         } catch (Throwable t) {//ref is null!
         }
     }
 
-    public void event() {
+    public void event(EventHandler eHandle) {
         if( !story.running ) {
             if (eHandle.release) {			// gör så att man bara kan ta ett steg i taget
                 if (lvl == 0) // om du är på yttre menyn dvs inte options

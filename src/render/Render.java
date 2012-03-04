@@ -30,8 +30,9 @@ public class Render extends Canvas {
 	 * dbImage lagrar dbg
 	 */
 	public Image dbImage;
+        
 	/**
-	 * eHandle används för tangentnedtryckningar
+	 * eHandle används för tangentnedtryckningar frivillig användning
 	 */
 	public EventHandler eHandle;
 

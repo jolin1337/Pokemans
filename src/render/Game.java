@@ -3,8 +3,11 @@ package render;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import javax.swing.ImageIcon;
+import projekt.Runner;
 import projekt.event.Dialogs;
 import projekt.event.Keys;
+import projekt.story.DisplayPropsFromChar;
 
 /**
  * Game är en subklass av Render vilket innebär att det är här all grafik
@@ -16,6 +19,10 @@ public class Game extends Render {
 
     public boolean loadWorld = false;
     public Point screenCoords = new Point(0, 0);
+    private DisplayPropsFromChar props = new DisplayPropsFromChar( "/res/CharMain/firehero.png", WIDTH /2 - 25, HEIGHT/2 );
+    public boolean paintProps = false;
+    private PFont drawFont = new PFont("");
+    
     /**
      * världens nuvarande egenskaper sparas och ändras i denna variabel.
      */
@@ -32,9 +39,13 @@ public class Game extends Render {
      * konstruktorn för spelet
      */
     public Game() {
+        props.setName("Dud");
+        props.setDisplayName(new ImageIcon(getClass().getResource("/res/intro/dud.png")));
+        
         focus = new Player(15, 17);
         focus.setChar("/res/CharMain/firehero.png");
         focus.name="Dud";
+        
         this.world = new World("/res/worlds/world1");
         focus.setOnWalkCallback(new OnWalkCallback() {
 
@@ -50,7 +61,8 @@ public class Game extends Render {
                 if (!Game.this.focus.action.isEmpty()) {
                     if(Game.this.focus.action.equals("dialog-fight"))
                         Game.this.fight = true;
-                    Game.this.focus.freeze = false;
+                    else
+                        Game.this.focus.freeze = false;
                     Game.this.focus.action = "";
                     
                 }
@@ -168,6 +180,11 @@ public class Game extends Render {
                 //focus.direciton = 0;
             }
         }
+        
+        if( select ){
+            paintProps=!paintProps;
+            k[Keys.select] = false;
+        }
     }
 
     private boolean preformAction(boolean pickNow) {
@@ -191,7 +208,8 @@ public class Game extends Render {
                 && !(temp.equals(new Color(0xff000000)) || temp.equals(new Color(0xffffffff)))) {
             if (Dialogs.endof && !pickNow) {
                 this.focus.action = "dialog";
-                Dialogs.initDialog(Dialogs.Begin.sayHello);
+                Player p = this.world.getPlayer(x, y);
+                Dialogs.initDialog("\t"+Dialogs.itemDialog[p.lvl]);
                 this.focus.freeze = true;
             }
             if (!pickNow) {
@@ -212,14 +230,16 @@ public class Game extends Render {
             if (b != 0) {
                 this.focus.addItem(b);
             }
+            Player p = this.world.getPlayer(x, y);
+            if(p.log.isEmpty())
+                p.log="hide";
+            else p.log += " hide";
             return true;
         } else if (temp.getRed() != 0 && !this.world.isPoortal(x,y) && !this.world.isWorldRise(x, y)
                 && !(temp.equals(new Color(0xff000000)) || temp.equals(new Color(0xffffffff)))) {		// omPlayer
             if (Dialogs.endof && !pickNow) {
-                this.focus.action = "dialog-fight";
-                Dialogs.initDialog(Dialogs.Begin.TALK);
-                this.focus.freeze = true;
-                Player cur = world.players.get(0);
+                Player cur = world.getPlayer(x,y);
+                this.focus.action = (cur.lvl%2 == 0?"dialog":"dialog-fight");
                 //fight = true;
                 if (cur.x > focus.x) {
                     cur.direciton = 1;//Vänster
@@ -231,6 +251,15 @@ public class Game extends Render {
                 } else if (cur.y != focus.y) {
                     cur.direciton = 0; //ner
                 }
+                try{
+                    Dialogs.initDialog("\t"+Dialogs.characterDialog[cur.lvl]);
+                }catch(IndexOutOfBoundsException e){
+                    Dialogs.endof=true;
+                    Dialogs.nextMessage();
+                    this.focus.action = "";
+                    return false;
+                }
+                this.focus.freeze = true;
             }
             return true;
         }
@@ -245,6 +274,7 @@ public class Game extends Render {
      */
     @Override
     public void paint(Graphics g) {
+        if(g==null)return;
         if (tr == null) {
             tr = new Transition();
             tr.Speed = 6;
@@ -289,7 +319,11 @@ public class Game extends Render {
             }
             tr.Transitions[Transition.Type.Fade].animate(g);
         }
-        focus.freeze = focus.action.startsWith("dialog") || tr.index > 0;
+        focus.freeze = focus.action.startsWith("dialog") || tr.index > 0 || paintProps;
+        
+        if(paintProps){
+            props.paint(dbg);
+        }
     }
 
     public void drawDialog(String message) {
@@ -298,16 +332,16 @@ public class Game extends Render {
         int y = HEIGHT / 4;
         this.dbg.fillRect(0, y * 3, WIDTH, y );
         this.dbg.setColor(Color.black);
-        this.dbg.drawRect(b, y * 3 + b, WIDTH - 3 * b, y - 7 * b );
+        this.dbg.drawRect(b, y * 3 + b, WIDTH - 3 * b, (int)(y - ( projekt.Menu.Applet ? 3.4 : 7  ) * b) );
 
-        this.dbg.setFont(new Font(Font.DIALOG, Font.BOLD, 10));
+        //this.dbg.setFont(new Font(Font.DIALOG, Font.BOLD, 10));
         //String[] lines = message.split("\n");
         /*
          * for (int i = 0; i < lines.length; i++) { FontMetrics fm =
          * this.getFontMetrics(this.dbg.getFont()); int width =
          * fm.stringWidth(lines[i]); if (width < this.getWidth() - (2 * b))
          */
-        new PFont(message, this.dbg, b + b, 3 * y + b + m);
+        drawFont.SetString(message).PrintAt(this.dbg, b + b, 3 * y + b + m);
         //}
     }
 
@@ -343,7 +377,8 @@ public class Game extends Render {
             loadWorld = false;
             try {
                 try {
-                    this.focus.addWorld(this.world.copy());
+                    if(this.focus.getWorldFromPath(this.world.path) == -1)
+                        this.focus.addWorld(this.world.copy());
                 } catch (CloneNotSupportedException ex) {
                     //Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -357,7 +392,7 @@ public class Game extends Render {
                 int x = this.world.pos[0];
                 int y = this.world.pos[1];
                 if (this.focus.getWorldFromPath(pa) == -1) {
-                    this.world.setWorld(pa, this.focus.x, this.focus.y);
+                    this.world = new World(pa);
                 } else {
 
                     this.world.pos[0] = -1;
@@ -365,7 +400,8 @@ public class Game extends Render {
                     this.world.pos[2] = -1;
                     this.world = this.focus.getWorld(this.focus.getWorldFromPath(pa));
                 }
-                this.focus.transport(x, y);
+                cleanup();
+                this.focus.transport(x, y); // flytta playern till x,y coord
                 if (this.world.isPoortal(x, y)) {
                     try {
                         if (this.world.canGo(this.focus.x, this.focus.y + 1) && !this.world.isPoortal(this.focus.x, this.focus.y + 1)) {
@@ -402,6 +438,22 @@ public class Game extends Render {
                 ErrorHandler.CharacterBoundary.resetCharacterPositionAt(this.focus, frx - 1, fry + 1);
                 this.focus.freeze = false;
             }
+        }
+    }
+    public void cleanup(){
+        // när du är i första världen så måste vi ränsa lite saker
+        if(this.world.path.contains("world1") && !this.world.path.contains("world11")) {
+            
+            // remove character 
+            this.world.removePlayer(this.world.getPlayer(12, 17));
+            
+            // redraw alpha map
+            Graphics2D ag = this.world.alpha.createGraphics();
+            ag.setColor(Color.white);
+            ag.fillRect(12, 17, 1, 1);
+            
+            // reseting health
+            this.focus.health = 100;
         }
     }
 }

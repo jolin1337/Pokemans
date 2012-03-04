@@ -13,7 +13,7 @@ public class PFont {
     private BufferedImage Bimg;
     private String text;
     private ImageIcon img = new ImageIcon(getClass().getResource("/res/fonts/white.png"));
-    private int _preferedWidth = 400;
+    private int _preferedWidth = 370;
 
     public PFont(String str) {
         text = str;
@@ -41,6 +41,7 @@ public class PFont {
     }
 
     public PFont SetColor(String str) {
+        str=str.toLowerCase();
         if ( str.equals("white") || str.equals("black") || str.equals("red") || str.equals("green") ) {
             img = new ImageIcon(getClass().getResource("/res/fonts/" + str + ".png"));
         } else {
@@ -56,7 +57,7 @@ public class PFont {
     }
 
     private BufferedImage ImgString() {
-        if(text.isEmpty())return null;
+        if(text == null || text.isEmpty())return null;
         try {
             String[] rows = text.split("\n");
             String end = "";

@@ -47,7 +47,7 @@ public class World implements Cloneable {
     BufferedImage alpha;
     BufferedImage items;
     private int id = 0;
-    public ArrayList<Player> players = new ArrayList<Player>();
+    private ArrayList<Player> players = new ArrayList<Player>();
 
     /**
      * konstruktorn försöker öppna forldern med alla biler och bestämma dess
@@ -57,11 +57,16 @@ public class World implements Cloneable {
         if (i == null) {
             throw new RuntimeException("The World is not defined");
         }
-        //sound.playSound("opening.mp3");
-        if (getClass().getResource(i) == null) 
-        	throw new RuntimeException("World,"+this.path+", does not exist!");
-        this.path = getClass().getResource(i).getPath();
         System.out.println("Loading...");
+        if (getClass().getResource(i) == null) 
+                try{
+                    this.path = i;
+                    this.loadWorld();
+                    return;
+                }catch(Throwable e){
+                    throw new RuntimeException("World,"+this.path+", does not exist!");
+                }
+        this.path = getClass().getResource(i).getPath();
         this.loadWorld();
     }
 
@@ -93,21 +98,33 @@ public class World implements Cloneable {
 
         this.items = new BufferedImage(this.alpha.getWidth() * radius, this.alpha.getHeight() * radius, BufferedImage.TYPE_INT_ARGB);
         gr = this.items.getGraphics();
+        players.removeAll(players);
         for (int ix = 0; ix < this.alpha.getWidth(); ix++) {
             for (int iy = 0; iy < this.alpha.getHeight(); iy++) {
                 int ixy = this.alpha.getRGB(ix, iy);
                 if( !isPoortal(ix, iy) && !isWorldRise(ix, iy) && ixy != 0xff000000 && ixy != 0xffffffff ) {
                     if ( (( ixy >>> 16 ) & 0xff) == 0 && ((ixy >>> 8) & 0xff) * 20 + 20 < this.grafik.getWidth() && (ixy & 0xff) * radius + radius < this.grafik.getHeight()) {
-                        gr.drawImage(
+                        /*gr.drawImage(
                                 this.grafik.getSubimage(
                                 ((ixy >>> 8) & 0xff) * radius,
                                 (ixy & 0xff) * 20,
                                 radius, 20),
-                                ix * radius, iy * radius - 8, null);
+                                ix * radius, iy * radius - 8, null);*/
+                        Player p = new Player( ix, iy );
+                        Color cp = getRGBA(ix, iy); // Colored Player
+                        //p.setChar("/res/Players/player" + (ip%2) + ".png");
+                        p.setChar(this.grafik.getSubimage(
+                                ((ixy >>> 8) & 0xff) * radius,
+                                (ixy & 0xff) * 20,
+                                radius, 20));
+                        p.lvl = cp.getAlpha() -1;
+                        players.add(p);
                     } else if ( (( ixy >>> 16 ) & 0xff) != 0 ) {
                         Player p = new Player( ix, iy );
-                        p.setChar("/res/Players/player" + 0 + ".png");
-                        p.lvl = ((ixy >> 8) & 0xff);
+                        Color cp = getRGBA(ix, iy); // Colored Player
+                        //p.setChar("/res/Players/player" + (ip%2) + ".png");
+                        p.setChar("/res/Players/player" + cp.getBlue() + ".png");
+                        p.lvl = cp.getAlpha() -1;
                         players.add(p);
                     }
                 }
@@ -262,11 +279,12 @@ public class World implements Cloneable {
     }
 
     void drawPlayers(Graphics g, int z, boolean over) {
-        for (int i = 0; i < players.size(); i++) {
+        for (Player p : players) {
+            if(p.log.contains("hide"))continue;
             if (!over) {
-                players.get(i).drawChar(g);
-            } else if (players.get(i).y2 >= z) {
-                players.get(i).drawChar(g);
+                p.drawChar(g);
+            } else if (p.y2 >= z) {
+                p.drawChar(g);
             }
         }
     }
@@ -314,5 +332,30 @@ public class World implements Cloneable {
         g.drawImage(this.overlay.getImage(), 0, 0, null);
         drawPlayers(g, (int) y2, true);
         ((Graphics2D) g).setTransform(a);
+    }
+
+    public Player getPlayer(int x, int y) {
+        int cur = 0;
+        int xy = getRGBA(x, y).getRGB();
+        for(Player p : players){
+            if(p.lvl == getRGBA(x, y).getAlpha() -1)
+                return p;
+            cur++;
+        }
+        if(players.size() > 0)
+            return players.get(0);
+        return null;
+    }
+
+    public void removePlayer(int i) {
+        players.remove(i);
+    }
+
+    public void removePlayer(Player p) {
+        players.remove(p);
+    }
+    
+    public int playerCount() {
+        return players.size();
     }
 }
