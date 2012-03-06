@@ -3,12 +3,11 @@ package render;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import primitives.House;
 import projekt.event.Keys;
@@ -48,7 +47,7 @@ public class World implements Cloneable {
     BufferedImage alpha;
     BufferedImage items;
     private int id = 0;
-    public ArrayList<Player> players = new ArrayList<Player>();
+    private ArrayList<Player> players = new ArrayList<Player>();
 
     /**
      * konstruktorn försöker öppna forldern med alla biler och bestämma dess
@@ -58,12 +57,16 @@ public class World implements Cloneable {
         if (i == null) {
             throw new RuntimeException("The World is not defined");
         }
-        this.path = i;
-        //sound.playSound("opening.mp3");
-        //if (getClass().getResource(i) == null) 
-        //	throw new RuntimeException("World,"+this.path+", does not exist!");
         System.out.println("Loading...");
-
+        if (getClass().getResource(i) == null) 
+                try{
+                    this.path = i;
+                    this.loadWorld();
+                    return;
+                }catch(Throwable e){
+                    throw new RuntimeException("World,"+this.path+", does not exist!");
+                }
+        this.path = getClass().getResource(i).getPath();
         this.loadWorld();
     }
 
@@ -72,8 +75,8 @@ public class World implements Cloneable {
     }
 
     private void loadWorld() {
-        ImageIcon temp = null;
-        Graphics gr = null;
+        ImageIcon temp;
+        Graphics gr;
         Keys.status = "Loading world";
         System.out.println(this.path + "layout loaded.");
         this.layout = new ImageIcon(this.path + "/layout.png");
@@ -88,29 +91,42 @@ public class World implements Cloneable {
 
         System.out.println("alpha loaded.");
         temp = new ImageIcon(this.path + "/alpha.png");
-        System.out.print(temp);
+        //System.out.println(temp.toString());
         this.alpha = new BufferedImage(temp.getIconWidth(), temp.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         gr = this.alpha.getGraphics();
         gr.drawImage(temp.getImage(), 0, 0, null);
 
         this.items = new BufferedImage(this.alpha.getWidth() * radius, this.alpha.getHeight() * radius, BufferedImage.TYPE_INT_ARGB);
         gr = this.items.getGraphics();
+        players.removeAll(players);
         for (int ix = 0; ix < this.alpha.getWidth(); ix++) {
             for (int iy = 0; iy < this.alpha.getHeight(); iy++) {
                 int ixy = this.alpha.getRGB(ix, iy);
-                if (((ixy >>> 16) & 0xff) == 255 && !(ixy == 0xff000000 || ixy == 0xffffffff)
-                        && ((ixy >>> 8) & 0xff) * 20 + 20 < this.grafik.getWidth() && (ixy & 0xff) * radius + radius < this.grafik.getHeight()) {
-                    gr.drawImage(
-                            this.grafik.getSubimage(
-                            ((ixy >>> 8) & 0xff) * radius,
-                            (ixy & 0xff) * 20,
-                            radius, 20),
-                            ix * radius, iy * radius - 8, null);
-                } else if ((ixy & 0xff) == 255 && ixy != 0xffffffff) {
-                    Player p = new Player(ix, iy);
-                    p.setChar("/res/Players/player" + ((ixy >> 16) & 0xff) + ".png");
-                    p.lvl = ((ixy >> 8) & 0xff);
-                    players.add(p);
+                if( !isPoortal(ix, iy) && !isWorldRise(ix, iy) && ixy != 0xff000000 && ixy != 0xffffffff ) {
+                    if ( (( ixy >>> 16 ) & 0xff) == 0 && ((ixy >>> 8) & 0xff) * 20 + 20 < this.grafik.getWidth() && (ixy & 0xff) * radius + radius < this.grafik.getHeight()) {
+                        /*gr.drawImage(
+                                this.grafik.getSubimage(
+                                ((ixy >>> 8) & 0xff) * radius,
+                                (ixy & 0xff) * 20,
+                                radius, 20),
+                                ix * radius, iy * radius - 8, null);*/
+                        Player p = new Player( ix, iy );
+                        Color cp = getRGBA(ix, iy); // Colored Player
+                        //p.setChar("/res/Players/player" + (ip%2) + ".png");
+                        p.setChar(this.grafik.getSubimage(
+                                ((ixy >>> 8) & 0xff) * radius,
+                                (ixy & 0xff) * 20,
+                                radius, 20));
+                        p.lvl = cp.getAlpha() -1;
+                        players.add(p);
+                    } else if ( (( ixy >>> 16 ) & 0xff) != 0 ) {
+                        Player p = new Player( ix, iy );
+                        Color cp = getRGBA(ix, iy); // Colored Player
+                        //p.setChar("/res/Players/player" + (ip%2) + ".png");
+                        p.setChar("/res/Players/player" + cp.getBlue() + ".png");
+                        p.lvl = cp.getAlpha() -1;
+                        players.add(p);
+                    }
                 }
             }
         }
@@ -147,12 +163,6 @@ public class World implements Cloneable {
                 if (t.getIconWidth() > this.pos[0] + radius && t.getIconHeight() > this.pos[1] + radius) {
                     this.loadWorld();
                 }
-                /**
-                 * @TODO LÖS ITEM, PLAYERS SÅ ATT DE INTE KOLLIDERAR MED SAMMA
-                 * DATA!!! if (Color.RED = 255) new
-                 * Item(Color.C,Color.M,Color.GREEN,Color.BLUE); also: if
-                 * (Color.BLUE = 255) new Character(x,y,Color.RED,Color.GREEN);
-                 */
                 this.pos[0] = -1;
                 this.pos[1] = -1;
                 this.pos[2] = -1;
@@ -201,13 +211,20 @@ public class World implements Cloneable {
     }
 
     public boolean isPoortal(int x, int y) {
-        if (this.getRGBA(x, y).getRGB() != 0xffffffff && this.getRGBA(x, y).getRGB() != 0xff000000
-                && !this.isEqual(this.getRGBA(x, y).getRGB())) {
+        int rgb=this.getRGBA(x, y).getRGB();
+        if ( rgb != 0xffffffff && rgb != 0xff000000 && this.getRGBA(x, y).getAlpha() == 254 ) {
             this.pos[0] = this.getRGBA(x, y).getGreen();//x
             this.pos[1] = this.getRGBA(x, y).getBlue(); //y
             this.pos[2] = this.getRGBA(x, y).getRed();//world number
             return true;
         }
+        return false;
+    }
+    public boolean isWorldRise(int x, int y){
+        /*int rgb=this.getRGBA(x, y).getRGB();
+        if(!isPoortal(x, y) && this.getRGBA(x, y).getAlpha() != 255 &&
+                ((rgb >>> 16) & 0xff) == 0 && ((rgb >>> 8) & 0xff) == 0 && (rgb & 0xff) == 0)
+            return true;*/
         return false;
     }
 
@@ -262,11 +279,12 @@ public class World implements Cloneable {
     }
 
     void drawPlayers(Graphics g, int z, boolean over) {
-        for (int i = 0; i < players.size(); i++) {
+        for (Player p : players) {
+            if(p.log.contains("hide"))continue;
             if (!over) {
-                players.get(i).drawChar(g);
-            } else if (players.get(i).y2 >= z) {
-                players.get(i).drawChar(g);
+                p.drawChar(g);
+            } else if (p.y2 >= z) {
+                p.drawChar(g);
             }
         }
     }
@@ -316,26 +334,28 @@ public class World implements Cloneable {
         ((Graphics2D) g).setTransform(a);
     }
 
-    void paint3D(Graphics g, int x2, int y2, int width, int height) {
-        Graphics2D g2 = ((Graphics2D) g);
-        AffineTransform t = g2.getTransform();
-        int w = 100, d = 200, h = 50;
-        int x = -x2 + width / 2, y = -y2 + height / 2;
+    public Player getPlayer(int x, int y) {
+        int cur = 0;
+        int xy = getRGBA(x, y).getRGB();
+        for(Player p : players){
+            if(p.lvl == getRGBA(x, y).getAlpha() -1)
+                return p;
+            cur++;
+        }
+        if(players.size() > 0)
+            return players.get(0);
+        return null;
+    }
 
-        g.drawRect(x, y, w, h);
+    public void removePlayer(int i) {
+        players.remove(i);
+    }
 
-        g2.translate(x, y);
-        g2.scale(-((double) x2 - w / 2) / (double) width, 1);
-        g2.shear(0, 0.5);
-        g.drawRect(0, 0, d, h);
-        g2.setTransform(t);
-
-        g.drawRect((int) (x - (d * ((double) x2 - w / 2)) / (double) width), y + d / 2, w, h);
-
-        g2.translate(x + w, y);
-        g2.scale(-((double) x2 - w / 2) / (double) width, 1);
-        g2.shear(0, 0.5);
-        g.drawRect(0, 0, d, h);
-        g2.setTransform(t);
+    public void removePlayer(Player p) {
+        players.remove(p);
+    }
+    
+    public int playerCount() {
+        return players.size();
     }
 }
