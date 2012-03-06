@@ -1,9 +1,12 @@
 package render;
 
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
+import render.OnWalkCallback;
+import render.World;
 
 /**
  * denna funktionen konrollerar karaktärens rörelser och data ex Grafik på hur karaktären skall se ut i olika vinlklar osv
@@ -52,6 +55,7 @@ public class Player {
      */
     public BufferedImage c;
     public BufferedImage cr;
+    public Image displayName;
     /**
      * avgör hur snabb karaktären förflyttarsig mellan ruta till ruta
      */
@@ -152,6 +156,11 @@ public class Player {
         ImageIcon t = new ImageIcon(getClass().getResource(img));
         c = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         c.getGraphics().drawImage(t.getImage(), 0, 0, null);
+        return this;
+    }
+    
+    public Player setChar(BufferedImage img) {
+        c = img;
         return this;
     }
 
@@ -368,9 +377,15 @@ public class Player {
         this.onWalkCallback = callback;
     }
 
-	void drawChar(Graphics g) {
-		if((int)frame > 3)frame=0;
-		BufferedImage t = c.getSubimage(radius * (int) (incr > 1.0 && frame != 0 ? (frame + 3)  : frame  ), 20 * direciton, radius, 20);
-		g.drawImage(t, (int)x2, (int)y2-7, null);
-	}
+    void drawChar(Graphics g) {
+            if((int)frame > 3)frame=0;
+            BufferedImage t;
+                
+            try{
+                t = c.getSubimage(radius * (int) (incr > 1.0 && frame != 0 ? (frame + 3)  : frame  ), 20 * direciton, radius, 20);
+            }catch(Exception e){
+                t = c.getSubimage( 0, 0, c.getWidth(), c.getHeight() );
+            }
+            g.drawImage(t, (int)x2, (int)y2-(t.getHeight() == 16?0:7), null);
+    }
 }

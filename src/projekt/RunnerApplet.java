@@ -1,14 +1,14 @@
 package projekt;
 
-import render.Player;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import javax.swing.JFrame;
-import projekt.event.Dialogs;
+import javax.swing.JApplet;
+import javax.swing.SwingUtilities;
 import projekt.event.Keys;
 import render.Battle;
 import render.Game;
+import render.Player;
 import render.Sound;
 
 /**
@@ -21,7 +21,7 @@ import render.Sound;
  * @param public eCheck(boolean[] keys)	eventskontroll
  * @author johannes
  */
-public class Runner extends JFrame implements Runnable {
+public class RunnerApplet extends JApplet implements Runnable {
 
     private static final int WIDTH = 405;
     private static final int HEIGHT = 405;
@@ -50,16 +50,49 @@ public class Runner extends JFrame implements Runnable {
      * Konstruktorn sätter standardvärderna så som bakgrundsfärg, eventlisteners
      * och Canvaskomponenten
      */
-    public Runner() {
-        //super(NAME);
+    public RunnerApplet() {
+    }
+    
+    @Override
+    public void init(){
+        try {
+            SwingUtilities.invokeAndWait(new Runnable(){
+                @Override
+                public void run(){
+                    menurender = new Menu(true);
+                    Sound.stopAllSound();
+                    Sound.playSound("hitros.wav");
+                    game = new Game();
+                    game.ins = getInsets();
+                    boss = new Player(10, 17);
+                    boss.setChar("/res/CharMain/boss.png");
+                    boss.direciton = 2;
+                    fight = new Battle(game.focus, boss);
+
+                    add(game);
+                    add(menurender);
+                    add(fight);
+                    menurender.setVisible(true);
+                    game.setVisible(false);
+                    fight.setVisible(false);
+                    fight.setBounds(0, 0, WIDTH, HEIGHT);
+                    game.setBounds(0, 0, WIDTH, HEIGHT);
+                    menurender.setBounds(0, 0, WIDTH, HEIGHT);
+                }
+            });
+        } catch (Exception ex) {
+            
+        } //super(NAME);
         //this.setTitle(NAME);
         //setUndecorated(true);
         this.setBackground(Color.BLACK);
         this.setForeground(Color.BLACK);
-        this.setResizable(false);
+        //this.setResizable(false);
         this.setVisible(true);
         this.setFont(new Font("Arial", Font.PLAIN, 24));
-        this.setDefaultCloseOperation(Runner.EXIT_ON_CLOSE);
+        
+        /** @DOTO HERE REMOVED */
+        //this.setDefaultCloseOperation(Runner.EXIT_ON_CLOSE);
 
         Dimension size = new Dimension(WIDTH, HEIGHT);
         setSize(size);
@@ -67,30 +100,11 @@ public class Runner extends JFrame implements Runnable {
         setMinimumSize(size);
         setMaximumSize(size);
 
-        menurender = new Menu();
-        Sound.stopAllSound();
-        Sound.playSound("hitros.wav");
-        game = new Game();
-        game.ins = getInsets();
-        boss = new Player(10, 17);
-        boss.setChar("/res/CharMain/boss.png");
-        boss.direciton = 2;
-        fight = new Battle(game.focus, boss);
-
-        add(game);
-        add(menurender);
-        add(fight);
-        menurender.setVisible(true);
-        game.setVisible(false);
-        fight.setVisible(false);
-        fight.setBounds(0, 0, WIDTH, HEIGHT);
-        game.setBounds(0, 0, WIDTH, HEIGHT);
-        menurender.setBounds(0, 0, WIDTH, HEIGHT);
-
         this.addKeyListener(game.eHandle);
         menurender.setFocusable(false);
         game.setFocusable(false);
         fight.setFocusable(false);
+        setFocusable(true);
         start();
 
         /*
@@ -101,9 +115,10 @@ public class Runner extends JFrame implements Runnable {
          * //if(!(this.fullScreen&&s.restoreFullScreen(false)))
          * //s.restoreScreen(this,false); //this.dispose(); }
          */
-
-        this.setLocationRelativeTo(null);
-        this.pack();
+        
+        /** @DOTO HERE REMOVED */
+        //this.setLocationRelativeTo(null);
+        //this.pack();
     }
 
     /**
@@ -119,7 +134,7 @@ public class Runner extends JFrame implements Runnable {
 
         double tickInt = 0;
         long startT = System.nanoTime();
-        double secperTick = 1 / 60.0;
+        double secperTick = 2.5 / 60.0;
         int tickCount = 0;
         long bi = 100000000;
         //requestFocus();
@@ -140,7 +155,8 @@ public class Runner extends JFrame implements Runnable {
             boolean ticked = false;
             while (tickInt > secperTick) {
                 eCheck(game.eHandle.keys);
-                if (!Keys.status.equals("")) {
+        /** @DOTO HERE REMOVED */
+                /*if (!Keys.status.equals("")) {
                     long t = System.currentTimeMillis() % 1000;
                     String title = this.getTitle();
                     int speed = 10;
@@ -155,11 +171,11 @@ public class Runner extends JFrame implements Runnable {
                     }
                 } else {
                     this.setTitle(NAME);
-                }
+                }*/
                 tickInt -= secperTick;
                 if (game.exitCode == 1 || menurender.exitCode == 1) {
                     System.out.println("\n");
-                    this.dispose();
+                    //this.dispose();
                     this.stop();
                 }
                 ticked = true;
@@ -184,10 +200,12 @@ public class Runner extends JFrame implements Runnable {
 
                 frame++;
             }
-            /*
-             * else //kanske lite onödig { try { Thread.sleep(1); } catch
-             * (InterruptedException e) { } }
-             */
+            else {
+                try {
+                    Thread.sleep(1); 
+                } catch(InterruptedException e) { } 
+            }
+             
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         }
     }
@@ -249,6 +267,8 @@ public class Runner extends JFrame implements Runnable {
                 menu = false;
                 game.setVisible(true);
                 menurender.setVisible(false);
+                removeKeyListener(menurender.eHandle);
+                addKeyListener(game.eHandle);
                 Sound.stopAllSound();
                 Sound.playSound("hitros.wav");
             }
@@ -256,14 +276,14 @@ public class Runner extends JFrame implements Runnable {
                 Sound.stopAllSound();
                 Sound.playSound("teleporter.wav");
                 menu = true;
-                keys[Keys.a] = false;
                 menurender.story.exitCode = 1;
             }
+            keys[Keys.a] = false; // !important
         } else if (keys[Keys.esc] && !menu) {
             menu = true;
 
-            game.setVisible(true);
-            menurender.setVisible(false);
+            game.setVisible(false);
+            menurender.setVisible(true);
         }
     }
 }

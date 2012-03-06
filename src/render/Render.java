@@ -30,8 +30,9 @@ public class Render extends Canvas {
 	 * dbImage lagrar dbg
 	 */
 	public Image dbImage;
+        
 	/**
-	 * eHandle används för tangentnedtryckningar
+	 * eHandle används för tangentnedtryckningar frivillig användning
 	 */
 	public EventHandler eHandle;
 
@@ -66,7 +67,7 @@ public class Render extends Canvas {
 	@Override
 	public void update(Graphics g) {
 		if (tr == null)
-			tr = new Transition("fadeInOut");
+			tr = new Transition();
 		if (dbImage == null || dbImage.getWidth(this) != WIDTH) {
 			dbImage = createImage(WIDTH, HEIGHT);
 			dbg = dbImage.getGraphics();
