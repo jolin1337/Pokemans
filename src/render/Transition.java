@@ -9,6 +9,7 @@ import java.awt.Rectangle;
  * @author Johan Lindskogen
  */
 public final class Transition {
+    int sleep;
 
 	public static class Type {
 		public static final int Fade = 0;
@@ -25,25 +26,22 @@ public final class Transition {
         public Anim[] Transitions = new Anim[]{
             // fadeOutIn //
             new Anim(){ 
+                int s=-1;
                 public void animate(Graphics g){
                     int speed = Speed;
-                            index += speed;
-                    /*if (index == 90 - (90 % speed)) {
-                            index = 90;
-                            g.setColor(new Color(0, 0, 0, (int)Math.abs(255 * Math.sin((index+255)*Math.PI/180)) ) );
-                            dirBool = true;
-                    } else if (dirBool && index < 0) {
-                            dirBool = false;
-                            index = 0;
-                    } else {
-                            g.setColor( new Color( 0, 0, 0, (int)Math.abs(255 * Math.sin((index+255)*Math.PI/180)) ) );
-                    }*/
+                    if(s == -1)
+                        s = sleep;
+                    if(index <= 90 - (90 % speed) || index >= 90 - (90 % speed) + sleep)
+                        index += speed;
+                    else
+                        sleep-=speed;
                     if (index == 90 - (90 % speed)) {
                         dirBool = true;
                     }
-                    else if (dirBool && index >= 180 - (180 % speed)) {
+                    else if (dirBool && index >= 180 - (180 % speed) + sleep) {
                             dirBool = false;
                             index = 0;
+                            sleep = s;
                     }
                     g.setColor( new Color( 0, 0, 0, (int)Math.abs(255 * Math.sin((index)*Math.PI/180)) ) );
                     g.fillRect(x, y, width, height);

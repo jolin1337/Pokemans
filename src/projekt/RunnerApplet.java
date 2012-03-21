@@ -1,8 +1,10 @@
 package projekt;
 
+import com.sun.corba.se.pept.transport.EventHandler;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.KeyboardFocusManager;
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 import projekt.event.Keys;
@@ -55,40 +57,36 @@ public class RunnerApplet extends JApplet implements Runnable {
     
     @Override
     public void init(){
-        try {
-            SwingUtilities.invokeAndWait(new Runnable(){
-                @Override
-                public void run(){
-                    menurender = new Menu(true);
-                    Sound.stopAllSound();
-                    Sound.playSound("hitros.wav");
-                    game = new Game();
-                    game.ins = getInsets();
-                    boss = new Player(10, 17);
-                    boss.setChar("/res/CharMain/boss.png");
-                    boss.direciton = 2;
-                    fight = new Battle(game.focus, boss);
-
-                    add(game);
-                    add(menurender);
-                    add(fight);
-                    menurender.setVisible(true);
-                    game.setVisible(false);
-                    fight.setVisible(false);
-                    fight.setBounds(0, 0, WIDTH, HEIGHT);
-                    game.setBounds(0, 0, WIDTH, HEIGHT);
-                    menurender.setBounds(0, 0, WIDTH, HEIGHT);
-                }
-            });
-        } catch (Exception ex) {
-            
-        } //super(NAME);
+        
+        //super(NAME);
         //this.setTitle(NAME);
         //setUndecorated(true);
+        this.setVisible(true);
+        this.setFocusable(true);
+        game = new Game();
+        this.addKeyListener(game.eHandle);
+        //KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(game.eHandle);
+        game.ins = getInsets();
+        menurender = new Menu(true);
+        Sound.stopAllSound();
+        Sound.playSound("hitros.wav");
+        boss = new Player(10, 17);
+        boss.setChar("/res/CharMain/boss.png");
+        boss.direciton = 2;
+        fight = new Battle(game.focus, boss);
+
+        add(game);
+        add(menurender);
+        add(fight);
+        menurender.setVisible(true);
+        game.setVisible(false);
+        fight.setVisible(false);
+        fight.setBounds(0, 0, WIDTH, HEIGHT);
+        game.setBounds(0, 0, WIDTH, HEIGHT);
+        menurender.setBounds(0, 0, WIDTH, HEIGHT);
         this.setBackground(Color.BLACK);
         this.setForeground(Color.BLACK);
         //this.setResizable(false);
-        this.setVisible(true);
         this.setFont(new Font("Arial", Font.PLAIN, 24));
         
         /** @DOTO HERE REMOVED */
@@ -100,11 +98,9 @@ public class RunnerApplet extends JApplet implements Runnable {
         setMinimumSize(size);
         setMaximumSize(size);
 
-        this.addKeyListener(game.eHandle);
         menurender.setFocusable(false);
         game.setFocusable(false);
         fight.setFocusable(false);
-        setFocusable(true);
         start();
 
         /*
@@ -140,6 +136,7 @@ public class RunnerApplet extends JApplet implements Runnable {
         //requestFocus();
         boolean b = false;
 
+        requestFocusInWindow();
         while (runner != null) {
             long dt = System.nanoTime();
             long PST = dt - startT;

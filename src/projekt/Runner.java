@@ -234,7 +234,7 @@ public class Runner extends JFrame implements Runnable {
         } else {
             game.tick(keys);
         }
-        if (game.fight ) {
+        if (game.fight && !fight.isShowing()) {
             game.setVisible(false);
             menurender.setVisible(false);
             fight.setVisible(true);

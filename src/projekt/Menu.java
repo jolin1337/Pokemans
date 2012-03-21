@@ -1,14 +1,13 @@
 package projekt;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import projekt.event.EventHandler;
 import projekt.event.Keys;
+import projekt.event.PathAnimator;
 import projekt.story.Story;
 import render.Game;
 import render.PFont;
@@ -31,8 +30,7 @@ public class Menu extends Render {
     //(Quit)
 
     public static boolean Applet;
-    private final int WIDTH = 405, HEIGHT = 405;
-    Canvas can = new Canvas();
+    private final int WIDTH = 400, HEIGHT = 400;
     Game proj = new Game();
     ImageIcon img;
     int step = 0;
@@ -48,12 +46,12 @@ public class Menu extends Render {
     boolean fullscreenError = false;
     Story story = new Story();
 
-    Menu() {
+    public Menu() {
         init();
         setFocusable(false);
     }
     
-    Menu(boolean applet){
+    public Menu(boolean applet){
         Applet = applet;
         init();
     }
@@ -61,6 +59,7 @@ public class Menu extends Render {
     public final void init() {
         try {
             story.running = true;
+            proj.injectPathWalker(new PathAnimator());
 
             //proj.removeKeyListener(proj.eHandle);
             //java.awt.event.KeyListener[] keyl = null;
@@ -178,7 +177,8 @@ public class Menu extends Render {
                     if (eHandle.previus != -1) {
                         if (eHandle.previus == Keys.up || eHandle.previus == Keys.down || eHandle.previus == Keys.left || eHandle.previus == Keys.right || eHandle.previus == Keys.a || eHandle.previus == Keys.b
                                 || eHandle.previus == KeyEvent.VK_W || eHandle.previus == KeyEvent.VK_D || eHandle.previus == KeyEvent.VK_S || eHandle.previus == KeyEvent.VK_A) {
-                            return;
+                            //controll++;
+                            //return;
                         }
                         switch (controll) {
                             case 0:				//up key
@@ -279,7 +279,7 @@ public class Menu extends Render {
                     if (fullscreenError) {
                         pf.SetColor("red").SetString("FULLSCREEN").PrintAt(g, x, y + 20);
                     } else {
-                        pf.SetString("FULLSCREEN").PrintAt(g, x, y + 20);
+                        pf.SetColor("black").SetString("FULLSCREEN").PrintAt(g, x, y + 20);
                     }
                     pf.SetColor("black");
                     pf.SetString("CONTROLS").PrintAt(g, x, y + 40);

@@ -5,8 +5,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
-import render.OnWalkCallback;
-import render.World;
 
 /**
  * denna funktionen konrollerar karaktärens rörelser och data ex Grafik på hur karaktären skall se ut i olika vinlklar osv
@@ -14,7 +12,20 @@ import render.World;
  */
 public class Player {
 
+    /** hur många har vår player klarat av i strid? */
+    public int kills = 0;
+    
+    /**
+     * denna boolean indikerar om karakären har nyligen gått upp i lvl och glämt att uppgradera sig
+     */
+    public boolean lvlup = false;
+    /**
+     * den här variabeln blir kallad så fort karaktären går någonstans.
+     */
     public OnWalkCallback onWalkCallback = null;
+    /**
+     * om karakären skall stå stilla så är denna san annars falsk
+     */
     public boolean freeze = false;
     /**
      * en string som beskriver olika händelser som karaktären gör i spelet
@@ -78,18 +89,17 @@ public class Player {
     String action = "";
 
     /**
-     * Konstruktor för Player som tar emot x,y-position. Hämtar röd & blå-värde i b & r.
-     * @param xpos
-     * @param ypos
-     * @param r
-     * @param b 
+     * Konstruktor för Player som tar emot x,y-position, radien r. 
+     * @param xpos position vart playern skall börja i x led
+     * @param ypos position vart playern skall börja i y led
+     * @param r radie eller höjden/bredden på en ruta av playern
      */
-    public Player(int xpos, int ypos, int r, int b) {
-        radius = 16;
+    public Player(int xpos, int ypos, int r) {
+        radius = r;
         x = xpos;
         y = ypos;
-        x2 = x * 16;
-        y2 = y * 16;
+        x2 = x * r;
+        y2 = y * r;
         items = new int[255];
     }
 
@@ -222,9 +232,9 @@ public class Player {
         }
         this.onWalkCallback.onWalk();
         double in = 0.09 * incr;
-        if (res == -1) {
+        if (res == -1)
             return;
-        } else if (res == 0) {
+        if (res == 0) {
             if (this.x * radius > this.x2) {
                 this.x2 += incr;
                 this.direciton = 2;
@@ -377,15 +387,37 @@ public class Player {
         this.onWalkCallback = callback;
     }
 
-    void drawChar(Graphics g) {
-            if((int)frame > 3)frame=0;
+    public void drawChar(Graphics g) {
+            frame %= 3;
             BufferedImage t;
                 
+            int height = c.getHeight() / 4;
+            int width = c.getWidth() / 3;
+            boolean small = height < 10;
+            if(!small)
+                t = c.getSubimage(width * (int)frame, height * direciton, width, height);
+            else
+                t = c.getSubimage( 0, 0, c.getWidth(), c.getHeight() );
+            //g.drawImage(t, (int)x2, (int)y2-(t.getHeight() == 16?0:7), null);
+            if(small)
+                g.drawImage(t, (int)x2, (int)y2 -2, null);
+            else
+                g.drawImage(t, (int)(x2 - 1.5), (int)(y2 - 4 - 3), radius + 3, (int)(((double)height / (double)width) * radius) + 3, null);
+    }
+
+    public void drawCharCenter(Graphics g, int WIDTH, int HEIGHT) {
+            frame %= 3;
+            BufferedImage t;
+                
+            int height = c.getHeight() / 4;
+            int width = c.getWidth() / 3;
             try{
-                t = c.getSubimage(radius * (int) (incr > 1.0 && frame != 0 ? (frame + 3)  : frame  ), 20 * direciton, radius, 20);
+                t = c.getSubimage(width * (int)frame, height * direciton, width, height);
             }catch(Exception e){
                 t = c.getSubimage( 0, 0, c.getWidth(), c.getHeight() );
             }
-            g.drawImage(t, (int)x2, (int)y2-(t.getHeight() == 16?0:7), null);
+            g.drawImage(t, (int)(WIDTH / 2 - radius / 2 + radius/2 - 1.5), (int)(HEIGHT / 2 - 4 + 1.5), radius + 3, (int)(((double)height / (double)width) * radius) + 3, null);
+
+            //g.drawImage(t, (int)x2, (int)y2-(t.getHeight() == 16?0:7), null);
     }
 }

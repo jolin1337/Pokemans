@@ -2,7 +2,6 @@ package projekt.story;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import projekt.event.Dialogs;
@@ -18,7 +17,7 @@ import render.Transition;
  * @author johannes
  */
 public class Story extends Render{
-    public final int WIDTH = 405, HEIGHT = 405;
+    public final int WIDTH = 400, HEIGHT = 400;
     
     int time = 0;
     
@@ -63,7 +62,7 @@ public class Story extends Render{
         new ImageIcon(getClass().getResource("/res/worlds/world187/layout.png"))
     };
     
-    private DisplayPropsFromChar props = new DisplayPropsFromChar( "/res/CharMain/firehero.png", WIDTH /2 - 25, HEIGHT/2 );
+    private DisplayPropsFromChar props = new DisplayPropsFromChar( "/res/CharMain/firehero.png", WIDTH /2, HEIGHT/2 );
     
     /**
      * Konstruktorn för story

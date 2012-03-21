@@ -6,8 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import primitives.House;
 import projekt.event.Keys;
@@ -247,12 +245,16 @@ public class World implements Cloneable {
     }
 
     public Color getRGBA(int x, int y) {
-        int pixelCol = this.alpha.getRGB(x, y);
-        return new Color(
-                (pixelCol >>> 16) & 0xff,
-                (pixelCol >>> 8) & 0xff,
-                pixelCol & 0xff,
-                (pixelCol >>> 24) & 0xff);
+        try{
+            int pixelCol = this.alpha.getRGB(x, y);
+            return new Color(
+                    (pixelCol >>> 16) & 0xff,
+                    (pixelCol >>> 8) & 0xff,
+                    pixelCol & 0xff,
+                    (pixelCol >>> 24) & 0xff);
+        }catch(ArrayIndexOutOfBoundsException e){
+            return null;
+        }
     }
     ImageIcon bg = new ImageIcon(getClass().getResource("/res/treerothen.png").getPath());
     BufferedImage bm = null;
@@ -301,7 +303,7 @@ public class World implements Cloneable {
         //drawBackground(g, -x2 + 9, -y2 - 9, width * 2, height * 2);
         //g.drawImage(this.alpha, -x2+width/2, -y2 + height/2,this.alpha.getWidth()*radius,this.alpha.getHeight()*radius, null);
         g.drawImage(this.layout.getImage(), -x2 + width / 2, -y2 + height / 2, null);//0,0,width,height,null);//
-        g.drawImage(this.items, -x2 + width / 2, -y2 + height / 2, null);
+        //g.drawImage(this.items, -x2 + width / 2, -y2 + height / 2, null);
         //g.drawImage(this.isSolid(x2, y2, radius, radius), 0, 20, null);
         //g.setColor(new Color(this.isSolid(x2/radius, y2/radius, radius, radius)));
         //g.fillReFlashigare namn på bilder! Dolda ändringar som involverar utvecklingen av items.ct( width/2-2*radius, height/2-radius-radius/5+radius,radius,radius);

@@ -4,9 +4,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
-import projekt.Runner;
 import projekt.event.Dialogs;
 import projekt.event.Keys;
+import projekt.event.PathAnimator;
 import projekt.story.DisplayPropsFromChar;
 
 /**
@@ -16,6 +16,9 @@ import projekt.story.DisplayPropsFromChar;
  * @author johannes
  */
 public class Game extends Render {
+    
+    public PathAnimator pathWalker = null;
+    boolean[] k;
 
     public boolean loadWorld = false;
     public Point screenCoords = new Point(0, 0);
@@ -183,8 +186,11 @@ public class Game extends Render {
         
         if( select ){
             paintProps=!paintProps;
+            props.hasManipualted=false;
             k[Keys.select] = false;
         }
+        if( paintProps && k[Keys.a] )
+            props.hasManipualted=true;
     }
 
     private boolean preformAction(boolean pickNow) {
@@ -275,7 +281,23 @@ public class Game extends Render {
     @Override
     public void paint(Graphics g) {
         if(g==null)return;
-        if (tr == null) {
+        if(pathWalker != null) {
+            if (tr == null) {
+                tr = new Transition();
+                tr.Speed = 6;
+                tr.sleep = 700;
+            }
+            pathWalker.character = focus;
+            k = pathWalker.tick(k);
+            this.tick(k);
+            if(tr.index <= 0 && tr.index >-300)
+                tr.index --;
+            else if(tr.index <=0){
+                tr.index = 0;
+                tr.Transitions[Transition.Type.Fade].animate(g);
+            }
+        }
+        else if (tr == null) {
             tr = new Transition();
             tr.Speed = 6;
         }
@@ -294,11 +316,12 @@ public class Game extends Render {
             ErrorHandler.CharacterBoundary.resetCharacterPositionAt(this.focus, frx - 1, fry + 1);
         }
         try {
-            if ((int) focus.frame > 3) {
-                focus.frame = 0;
-            }
-            BufferedImage t = focus.c.getSubimage(radius * (int) (focus.incr > 1.0 && focus.frame != 0 ? (focus.frame + 4) : focus.frame), 20 * focus.direciton, radius, 20);
-            g.drawImage(t, WIDTH / 2 - t.getWidth() / 2 - radius / 2 + radius, HEIGHT / 2 - t.getHeight() - radius / 5 + radius, this);
+            //BufferedImage t = focus.c.getSubimage(radius * (int) (focus.incr > 1.0 && focus.frame != 0 ? (focus.frame + 4) : focus.frame), 20 * focus.direciton, radius, 20);
+            //int width = focus.c.getWidth() / 3;
+            //int height = focus.c.getHeight() / 4;
+            focus.drawCharCenter(g, WIDTH, HEIGHT);
+            //BufferedImage t = focus.c.getSubimage(width * (int)focus.frame , height * focus.direciton, width, height);
+            //g.drawImage(t, WIDTH / 2 - radius / 2 + radius/2, HEIGHT / 2 - height/2 + (height - radius)/2, radius, (int)(((double)height / (double)width) * radius), this);
 
         } catch (java.awt.image.RasterFormatException e) {//om bilden clips utanför bredden, höjden eller är negativ 
         }
@@ -313,13 +336,43 @@ public class Game extends Render {
             } catch (NullPointerException e) {
             }
         }
-        if (tr.index > 0) {
-            if (tr.dirBool) {
-                //dbg.drawImage(before, 0, 0, this);
+        try{// unloking the wall levels
+            if(world.path.contains("world11")){
+                int c = world.alpha.getRGB(127, 24);
+                if(c != 0xffffffff && focus.kills >= 3){
+                    Graphics2D ag = this.world.alpha.createGraphics();
+                    ag.setColor(Color.white);
+
+                    ag = this.world.alpha.createGraphics();
+                    ag.setColor(new Color(255,255,255, 255));
+                    ag.fillRect(127, 24, 12, 1);
+                }
+                c = world.alpha.getRGB(127, 18);
+                if(c != 0xffffffff && focus.kills >= 4 && world.path.contains("world11")){
+                    Graphics2D ag = this.world.alpha.createGraphics();
+                    ag.setColor(Color.white);
+
+                    ag = this.world.alpha.createGraphics();
+                    ag.setColor(new Color(255,255,255, 255));
+                    ag.fillRect(127, 18, 12, 1);
+                }
+                c = world.alpha.getRGB(126, 11);
+                if(c != 0xffffffff && focus.kills >= 5 && world.path.contains("world11")){
+                    Graphics2D ag = this.world.alpha.createGraphics();
+                    ag.setColor(Color.white);
+
+                    ag = this.world.alpha.createGraphics();
+                    ag.setColor(new Color(255,255,255, 255));
+                    ag.fillRect(126, 11, 1, 1);
+                }
             }
+        }
+        catch(Exception e){}
+        
+        if (tr.index > 0) {
             tr.Transitions[Transition.Type.Fade].animate(g);
         }
-        focus.freeze = focus.action.startsWith("dialog") || tr.index > 0 || paintProps;
+        focus.freeze = focus.action.startsWith("dialog") || (tr.index > 0 && pathWalker == null) || paintProps;
         
         if(paintProps){
             props.paint(dbg);
@@ -327,6 +380,7 @@ public class Game extends Render {
     }
 
     public void drawDialog(String message) {
+        if( dbg == null)return;
         int b = 5;
         int m = 8;
         int y = HEIGHT / 4;
@@ -334,31 +388,12 @@ public class Game extends Render {
         this.dbg.setColor(Color.black);
         this.dbg.drawRect(b, y * 3 + b, WIDTH - 3 * b, (int)(y - ( projekt.Menu.Applet ? 3.4 : 7  ) * b) );
 
-        //this.dbg.setFont(new Font(Font.DIALOG, Font.BOLD, 10));
-        //String[] lines = message.split("\n");
-        /*
-         * for (int i = 0; i < lines.length; i++) { FontMetrics fm =
-         * this.getFontMetrics(this.dbg.getFont()); int width =
-         * fm.stringWidth(lines[i]); if (width < this.getWidth() - (2 * b))
-         */
         drawFont.SetString(message).PrintAt(this.dbg, b + b, 3 * y + b + m);
-        //}
-    }
-
-    public void drawShadowWithString(String string, int x, int y, Color c1, Color c2) {
-        this.dbg.setColor(c2);
-        this.dbg.drawString(string, x + 1, y);
-        this.dbg.drawString(string, x - 1, y);
-        this.dbg.drawString(string, x, y + 1);
-        this.dbg.drawString(string, x, y - 1);
-        this.dbg.setColor(c1);
-        this.dbg.drawString(string, x, y);
     }
 
     public void checkWarp() {
         int frx = this.focus.x;
         int fry = this.focus.y;
-        boolean fading = false;
         if (world.isPoortal((int) (this.focus.x2 / radius - 0.1 + 1), (int) (this.focus.y2 / radius - 0.1 + 1)) && !this.focus.freeze) {
             loadWorld = true;
             focus.action = "world";
@@ -369,9 +404,13 @@ public class Game extends Render {
                     Robot rbt = new Robot();
                     before = rbt.createScreenCapture(new Rectangle(screenCoords.x + ins.left, screenCoords.y + ins.top, 406, 400));// 2,35
                 }
+                tr.dirBool = false;
+                tr.index = 0;
+                tr.Transitions[Transition.Type.Fade].animate(dbg);
             } catch (AWTException ex) {
             }
-            tr.Transitions[Transition.Type.Fade].animate(dbg);
+            catch ( NullPointerException e){
+            }
         }
         if (loadWorld && tr.dirBool) {
             loadWorld = false;
@@ -455,5 +494,10 @@ public class Game extends Render {
             // reseting health
             this.focus.health = 100;
         }
+    }
+
+    public void injectPathWalker(PathAnimator pathAnimator) {
+        pathWalker = pathAnimator;
+        k = new boolean[65536];
     }
 }
