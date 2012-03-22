@@ -24,10 +24,14 @@ public class Battle extends Render {
     Graphics dbg;
     int menupos = 0;
     public Player me, you;
+    String[] menuOptions = {"ATTACK","ITEMS","MAGIC","RUN"};
+    String actionText;
+    boolean subMenu = false;
 
     public Battle(Player c1, Player c2) {
         me = c1;
         you = c2;
+        actionText = "What will "+me.name+" do?";
         setSize(400, 400);
         setBackground(Color.white);
         setFocusable(false);
@@ -66,6 +70,10 @@ public class Battle extends Render {
                 menupos = 3;
             }
         }
+        if (keys[Keys.a])
+            Action(menupos);
+        if (subMenu && keys[Keys.b])
+            Action(-1);
     }
 
     private void Update(Graphics g) {
@@ -140,7 +148,7 @@ public class Battle extends Render {
         g.setColor(new Color(0x285068));
         g.fillRoundRect(12, 261, 236, 106, 5, 5);
         g.setColor(new Color(0xFFFFFF));
-        new PFont("What will " + me.name + " do?", g, 25, 273);
+        new PFont(actionText, g, 25, 273);
         g.setColor(blk);
         g.fillRect(200, 250, 200, 150);
         g.setColor(new Color(0x706880));
@@ -151,13 +159,41 @@ public class Battle extends Render {
         //Menu items
         g.setColor(blk);
 
-        battle.SetString("ATTACK").PrintAt(g, 227, 288);
-        battle.SetString("ITEMS").PrintAt(g, 330, 288);
-        battle.SetString("MAGIC").PrintAt(g, 227, 329);
-        battle.SetString("RUN").PrintAt(g, 330, 329);
+        battle.SetString(menuOptions[0]).PrintAt(g, 227, 288);
+        battle.SetString(menuOptions[1]).PrintAt(g, 330, 288);
+        battle.SetString(menuOptions[2]).PrintAt(g, 227, 329);
+        battle.SetString(menuOptions[3]).PrintAt(g, 330, 329);
 
         //Cursor position
         int[] curpos[] = {new int[]{215, 285}, new int[]{317, 285}, new int[]{215, 325}, new int[]{317, 325}};
         g.fillPolygon(new int[]{curpos[menupos][0], curpos[menupos][0] + 9, curpos[menupos][0]}, new int[]{curpos[menupos][1], curpos[menupos][1] + 9, curpos[menupos][1] + 18}, 3);
+    }
+    void Action(int selection){
+        if (selection == -1){
+            subMenu = false;
+            menuOptions[0] = "ATTACK";
+            menuOptions[1] = "ITEMS";
+            menuOptions[2] = "MAGIC";
+            menuOptions[3] = "RUN";
+            actionText = "What will "+me.name+" do?";
+        }
+        else if (subMenu)
+            return;
+        switch(selection){
+            case 0: // Attack
+                menuOptions[0] = "TACKLE";
+                menuOptions[1] = "PUNCH";
+                menuOptions[2] = "KICK";
+                menuOptions[3] = "HEADBUTT";
+                actionText = "Attack, you say?";
+                break;
+            case 1: // Items
+                break;
+            case 2: // Magic
+                break;
+            case 3: // Run
+                break;
+            default:
+        }
     }
 }
