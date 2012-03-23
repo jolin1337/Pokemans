@@ -3,8 +3,10 @@ package render;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
+import projekt.event.FighterDamage;
 
 /**
  * denna funktionen konrollerar karaktärens rörelser och data ex Grafik på hur karaktären skall se ut i olika vinlklar osv
@@ -59,6 +61,10 @@ public class Player {
     private String[] fights;
     /**
      * direction säger åt vilket håll som karaktären är påväg emot
+     * 0 = ner
+     * 1 = vänster
+     * 2 = höger
+     * 3 = uppåt
      */
     public int direciton;
     /**
@@ -83,6 +89,8 @@ public class Player {
     public int health = 100, maxHealth = 100;
     public String name = "RANDOM";
     public int lvl = 1;
+    public FighterDamage damages = new FighterDamage();
+    
     /**
      * om det pågår en dialog med karaktären
      */
@@ -101,6 +109,10 @@ public class Player {
         x2 = x * r;
         y2 = y * r;
         items = new int[255];
+        damages.setDamageParam(0, 10);
+        damages.setDamageParam(1, 5);
+        damages.setDamageParam(2, 8);
+        damages.setDamageParam(3, 12);
     }
 
     /**
@@ -118,6 +130,10 @@ public class Player {
         this.radius = r;
         this.items = new int[255];
         this.worlds = new ArrayList<World>();
+        damages.setDamageParam(0, 10);
+        damages.setDamageParam(1, 5);
+        damages.setDamageParam(2, 8);
+        damages.setDamageParam(3, 12);
     }
 
     public boolean addItem(int b) {
@@ -149,29 +165,6 @@ public class Player {
         int cur = this.items[i];
         this.items[i] = b;
         return cur;
-    }
-
-    /**
-     * initialiserar all Grafik på karaktären med hjäl utav en string som innehåller alla path:er till bilderna
-     * @param img array av strings
-     */
-    public Player setChar(String img) {
-        ImageIcon t = new ImageIcon(getClass().getResource(img));
-        c = new BufferedImage(t.getIconWidth(), t.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-        c.getGraphics().drawImage(t.getImage(), 0, 0, null);
-        return this;
-    }
-
-    public Player setChar(String img, int width, int height) {
-        ImageIcon t = new ImageIcon(getClass().getResource(img));
-        c = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        c.getGraphics().drawImage(t.getImage(), 0, 0, null);
-        return this;
-    }
-    
-    public Player setChar(BufferedImage img) {
-        c = img;
-        return this;
     }
 
     public void setRunningPose(String img) {
@@ -387,6 +380,33 @@ public class Player {
         this.onWalkCallback = callback;
     }
 
+    /**
+     * initialiserar all Grafik på karaktären med hjäl utav en string som innehåller alla path:er till bilderna
+     * @param img array av strings
+     */
+    public Player setChar(String img) {
+        ImageIcon t = new ImageIcon(getClass().getResource(img));
+        c = new BufferedImage(t.getIconWidth(), t.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+        c.getGraphics().drawImage(t.getImage(), 0, 0, null);
+        return this;
+    }
+
+    public Player setChar(String img, int width, int height) {
+        ImageIcon t = new ImageIcon(getClass().getResource(img));
+        c = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        c.getGraphics().drawImage(t.getImage(), 0, 0, null);
+        return this;
+    }
+    
+    public Player setChar(BufferedImage img) {
+        c = img;
+        return this;
+    }
+    
+    /**
+     * Ritar en player på nuvarande position på skärmen
+     * @param g graphics objektet
+     */
     public void drawChar(Graphics g) {
             frame %= 3;
             BufferedImage t;
@@ -405,6 +425,29 @@ public class Player {
                 g.drawImage(t, (int)(x2 - 1.5), (int)(y2 - 4 - 3), radius + 3, (int)(((double)height / (double)width) * radius) + 3, null);
     }
 
+    /**
+     * Ritar en player på den givna x,y,width,height positionen med nuvarande frame och riktning 
+     * @param g
+     * @param x x - positionen
+     * @param y y - positionen
+     * @param width width på playern
+     * @param height - height på playern
+     */
+    void drawChar(Graphics g, int x, int y, int width, int height, ImageObserver o) {
+            frame %= 3;
+            BufferedImage t;
+                
+            int innerheight = c.getHeight() / 4;
+            int innerwidth = c.getWidth() / 3;
+            boolean small = innerheight < 10;
+            if(!small)
+                t = c.getSubimage(innerwidth * (int)frame, innerheight * direciton, innerwidth, innerheight);
+            else
+                t = c.getSubimage( 0, 0, c.getWidth(), c.getHeight() );
+            g.drawImage(t, x, y, width, height, o);
+            //g.drawImage(t, (int)x2, (int)y2-(t.getHeight() == 16?0:7), nul
+    }
+
     public void drawCharCenter(Graphics g, int WIDTH, int HEIGHT) {
             frame %= 3;
             BufferedImage t;
@@ -419,5 +462,35 @@ public class Player {
             g.drawImage(t, (int)(WIDTH / 2 - radius / 2 + radius/2 - 1.5), (int)(HEIGHT / 2 - 4 + 1.5), radius + 3, (int)(((double)height / (double)width) * radius) + 3, null);
 
             //g.drawImage(t, (int)x2, (int)y2-(t.getHeight() == 16?0:7), null);
+    }
+    
+    public void copyChar(Player p){
+        action = p.action;
+        bug = p.bug;
+        setChar(p.c);
+        cr = p.cr;
+        damages = p.damages;
+        direciton = p.direciton;
+        displayName = p.displayName;
+        frame = p.frame;
+        freeze = p.freeze;
+        
+        health = p.health;
+        maxHealth = p.maxHealth;
+        
+        incr = p.incr;
+        items = p.items;
+        kills = p.kills;
+        log = p.log;
+        lvl = p.lvl;
+        name = p.name;
+        onWalkCallback = p.onWalkCallback;
+        radius = p.radius;
+        stand = p.stand;
+        worlds = p.worlds;
+        x = p.x;
+        y = p.y;
+        x2 = p.getX2();
+        y2 = p.getY2();
     }
 }

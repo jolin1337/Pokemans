@@ -235,6 +235,8 @@ public class Runner extends JFrame implements Runnable {
             game.tick(keys);
         }
         if (game.fight && !fight.isShowing()) {
+            boss.copyChar(game.currentFightingOp);
+            fight.me.copyChar(game.focus);
             game.setVisible(false);
             menurender.setVisible(false);
             fight.setVisible(true);
@@ -243,6 +245,39 @@ public class Runner extends JFrame implements Runnable {
                 Sound.stopAllSound();
                 Sound.playSound("teleporter.wav");
             }
+        }
+        if( fight.exitCode > 0 ){
+            game.fight = false;
+            if( game.focus.health <= 0 ){
+                fight.clear();
+                this.removeKeyListener(game.eHandle);
+                this.remove(game);
+                game = new Game();
+                this.addKeyListener(game.eHandle);
+                game.setFocusable(false);
+                game.setBounds(0, 0, WIDTH, HEIGHT);
+                this.add(game);
+                
+                game.setVisible(false);
+                menurender.setVisible(true);
+                fight.setVisible(false);
+                menu=true;
+                menurender.exitCode = 0;
+                game.focus.health = game.focus.maxHealth;
+                return;
+            }
+            if( fight.exitCode == 2 ){
+                game.focus.kills++;
+                game.currentFightingOp.copyChar(boss);
+            }
+            fight.clear();
+            game.setVisible(true);
+            menurender.setVisible(false);
+            fight.setVisible(false);
+            keys[Keys.a] = false;
+        }
+        else{
+            
         }
         if (keys[Keys.a] && ( menurender.lvl == 0 && menurender.step == 0 ) && !menurender.story.running) {
             if( menu ){

@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 import projekt.event.EventHandler;
@@ -24,10 +26,19 @@ public class Battle extends Render {
     Graphics dbg;
     int menupos = 0;
     public Player me, you;
+    
+    String[] menuOptions = {"ATTACK","ITEMS","MAGIC","RUN"};
+    String actionText;
+    boolean subMenu = false;
+    private boolean you_turn;
+    
+    protected boolean temp_var = false; 
 
     public Battle(Player c1, Player c2) {
         me = c1;
         you = c2;
+        you_turn = Math.random()<0.5?true:false;
+        actionText = "What will "+(you_turn?you.name:me.name)+" do?";
         setSize(400, 400);
         setBackground(Color.white);
         setFocusable(false);
@@ -37,35 +48,50 @@ public class Battle extends Render {
     }
 
     public void tick(boolean[] keys) {
-
+        if( you_turn ){
+            keys[Keys.a] = true;
+            menupos = 0;
+            if( subMenu )
+                menupos = Math.round((float)Math.random()*3); // 0 <= menupos <= 3
+        }
         if (keys[Keys.up]) {
-            if (menupos == 2) {
+            if (menupos == 2 && !menuOptions[0].equals("-")) {
                 menupos = 0;
-            } else if (menupos == 3) {
+            } else if (menupos == 3 && !menuOptions[1].equals("-")) {
                 menupos = 1;
             }
         }
         if (keys[Keys.down]) {
-            if (menupos == 0) {
+            if (menupos == 0 && !menuOptions[2].equals("-")) {
                 menupos = 2;
-            } else if (menupos == 1) {
+            } else if (menupos == 1 && !menuOptions[3].equals("-")) {
                 menupos = 3;
             }
         }
         if (keys[Keys.left]) {
-            if (menupos == 1) {
+            if (menupos == 1 && !menuOptions[0].equals("-")) {
                 menupos = 0;
-            } else if (menupos == 3) {
+            } else if (menupos == 3 && !menuOptions[2].equals("-")) {
                 menupos = 2;
             }
         }
         if (keys[Keys.right]) {
-            if (menupos == 0) {
+            if (menupos == 0 && !menuOptions[1].equals("-")) {
                 menupos = 1;
-            } else if (menupos == 2) {
+            } else if (menupos == 2 && !menuOptions[3].equals("-")) {
                 menupos = 3;
             }
         }
+        if (keys[Keys.a] && !temp_var || keys[Keys.a] && you_turn){
+            Action(menupos);
+            temp_var = true;
+        }
+        if (!keys[Keys.a] && temp_var)
+            temp_var = false;
+            
+        
+        if (subMenu && keys[Keys.b])
+            Action(-1);
     }
 
     private void Update(Graphics g) {
@@ -124,12 +150,23 @@ public class Battle extends Render {
         //Ovaler, marken
         g.setColor(new Color(0x80E078));
         g.fillOval(175, 75, 200, 75);
-        g.fillOval(20, 200, 200, 75);
+        g.fillOval(-20, 200, 240, 115);
         g.setColor(new Color(0xC0F890));
         g.fillOval(180, 80, 190, 65);
-        g.fillOval(25, 205, 190, 65);
-
-
+        g.fillOval(-15, 205, 230, 105);
+        
+        // Bilder från player me
+        int temp_direkt = me.direciton;
+        me.direciton = 2;
+        me.drawChar(g, -40, getHeight() - 310, 210, 200, this);
+        me.direciton = temp_direkt;
+        
+        // Bilder från player you
+        temp_direkt = you.direciton;
+        you.direciton = 1;
+        you.drawChar(g, getWidth() - 170, 20, 100, 100, this);
+        you.direciton = temp_direkt;
+        
         //Statusmenu + Actionmenu
         g.setColor(blk);
         g.fillRect(0, 250, 400, 150);
@@ -140,7 +177,7 @@ public class Battle extends Render {
         g.setColor(new Color(0x285068));
         g.fillRoundRect(12, 261, 236, 106, 5, 5);
         g.setColor(new Color(0xFFFFFF));
-        new PFont("What will " + me.name + " do?", g, 25, 273);
+        new PFont(actionText, g, 25, 273);
         g.setColor(blk);
         g.fillRect(200, 250, 200, 150);
         g.setColor(new Color(0x706880));
@@ -148,16 +185,122 @@ public class Battle extends Render {
         g.setColor(new Color(0xFFFFFF));
         g.fillRoundRect(210, 260, 180, 110, 5, 5);
 
-        //Menu items
-        g.setColor(blk);
+        if( !actionText.contains("used") ){
+            //Menu items
+            g.setColor(blk);
 
-        battle.SetString("ATTACK").PrintAt(g, 227, 288);
-        battle.SetString("ITEMS").PrintAt(g, 330, 288);
-        battle.SetString("MAGIC").PrintAt(g, 227, 329);
-        battle.SetString("RUN").PrintAt(g, 330, 329);
+            battle.SetString(menuOptions[0]).PrintAt(g, 227, 288);
+            battle.SetString(menuOptions[1]).PrintAt(g, 330, 288);
+            battle.SetString(menuOptions[2]).PrintAt(g, 227, 329);
+            battle.SetString(menuOptions[3]).PrintAt(g, 330, 329);
 
-        //Cursor position
-        int[] curpos[] = {new int[]{215, 285}, new int[]{317, 285}, new int[]{215, 325}, new int[]{317, 325}};
-        g.fillPolygon(new int[]{curpos[menupos][0], curpos[menupos][0] + 9, curpos[menupos][0]}, new int[]{curpos[menupos][1], curpos[menupos][1] + 9, curpos[menupos][1] + 18}, 3);
+            //Cursor position
+            int[] curpos[] = {new int[]{215, 285}, new int[]{317, 285}, new int[]{215, 325}, new int[]{317, 325}};
+            g.fillPolygon(new int[]{curpos[menupos][0], curpos[menupos][0] + 9, curpos[menupos][0]}, new int[]{curpos[menupos][1], curpos[menupos][1] + 9, curpos[menupos][1] + 18}, 3);
+        }
+        else{
+            // Epic punch
+            Color p = new Color(255,55,55);
+            if( you_turn ){
+                g.setColor(p);
+                g.fillRect(150, getHeight() - 240, 40, 40);
+                p = p.darker();
+                g.setColor(p);
+                g.fillRect(130, getHeight() - 240, 40, 40);
+                p = p.darker();
+                p = p.darker();
+                g.setColor(p);
+                g.fillRect(140, getHeight() - 260, 40, 40);
+            }
+            else{
+                g.setColor(p);
+                g.fillRect(getWidth() - 170, 30, 20, 20);
+                p = p.darker();
+                g.setColor(p);
+                g.fillRect(getWidth() - 160, 30, 20, 20);
+                p = p.darker();
+                p = p.darker();
+                g.setColor(p);
+                g.fillRect(getWidth() - 164, 40, 20, 20);
+            }
+        }
+        
+    }
+    void Action(int selection){
+        if (subMenu && selection!=-1) {
+            if( actionText.contains("Attack") ){
+                if( menupos == 0 ){         // TACKLE
+                    actionText = (you_turn?you.name:me.name) + " used TACKLE!";
+                    if( you_turn )
+                        me.health -= 10;
+                    else
+                        you.health -= 10;
+                }
+                else if( menupos > 0 && menupos < 4 ){    // other
+                    actionText = (you_turn?you.name:me.name) + " used " + (you_turn?you:me).damages.getDamageParamName(menupos) + "!";
+                    (you_turn?me:you).health -= Math.random()*(you_turn?you:me).damages.getDamageParam(menupos)*(you_turn?you:me).lvl/(you_turn?me:you).lvl;
+                }
+                try {
+                    paint(getGraphics());
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {}
+                catch(NullPointerException e){}
+                you_turn = !you_turn;   // ändrar turen
+                if( you.health <= 0 )
+                    exitCode = 2;
+                else if( me.health <= 0 )
+                    exitCode = 1;
+            }
+            selection = -1;
+        }
+        menupos = 0;
+        if (selection == -1){
+            subMenu = false;
+            menuOptions[0] = "ATTACK";
+            menuOptions[1] = "ITEMS";
+            menuOptions[2] = "MAGIC";
+            menuOptions[3] = "RUN";
+            actionText = "What will "+(you_turn?you.name:me.name)+" do?";
+            return;
+        }
+        subMenu= true;
+        switch(selection){
+            case 0: // Attack
+                menuOptions[0] = "TACKLE";
+                menuOptions[1] = "PUNCH";
+                menuOptions[2] = "KICK";
+                menuOptions[3] = "HEADBUTT";
+                actionText = "Attack, you say?";
+                break;
+            case 1: // Items
+                menuOptions[0] = "HP-POTION";
+                menuOptions[1] = "HUGGER";
+                menuOptions[2] = "-";
+                menuOptions[3] = "-";
+                actionText = "Items, you say?";
+                break;
+            case 2: // Magic
+                menuOptions[0] = "CURSE";
+                menuOptions[1] = "FIRE";
+                menuOptions[2] = "ICE";
+                menuOptions[3] = "HEAL";
+                actionText = "Magic, you say?";
+                break;
+            case 3: // Run
+                exitCode = 1;
+                break;
+            default:
+        }
+    }
+    
+    public void clear(){
+        exitCode = 0;
+        subMenu = false;
+        menuOptions[0] = "ATTACK";
+        menuOptions[1] = "ITEMS";
+        menuOptions[2] = "MAGIC";
+        menuOptions[3] = "RUN";
+        actionText = "What will "+(you_turn?you.name:me.name)+" do?";
+        menupos = 0;
     }
 }

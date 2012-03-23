@@ -16,23 +16,23 @@ public final class Dialogs {
     }
 
     public static final class main {
-        public static final String TALK = "Hej jag ar en Player som du kan prata med!";
         public static String wellcomeDude = "Welcome to the world of Pokemans, here you will find amazing stuff and explore extremely dangerous dungeon's of caos...\t"
                 + "Rememder it is very dangerous in there and you need to stay focus all the time to survive If not, you will probably die as the one before you did...\t"
-                + "Now, go and explore the dungeon's for your self and se what awaits you, you just need to enter that door over there.";
+                + "Now, go and explore the dungeon's for yourself and see what awaits you, you just need to enter that door over there.";
         public static String dungeonEntryDude = "Welcome to the dungeon, this is a very dangerous place and you need to be careful. When someone attacks you, up with your guard and fight back, only then you will win.\t"
                 + " Your first opponent waits for you up ahead!";
         public static String[] hellper = new String[]{
             "Hello you are doing well, now when you have come this far there is some more waiting. \t"
-            + "Litle further away you can se a green line that you can't pass until you have completed all levels of dungeon's in this section"
-            + "Only then you'll pass the barrier and can continue, good lock."
+            + "Litle further away you can see a green line that you can't pass until you have completed all levels of dungeon's in this section"
+            + "Only then you'll pass the barrier and can continue, good luck."
         };
     }
 
     public static final class EnemyCalls {
+        public static String defeatedEnemy = "You win, why?\n It is so imberasing";
 
-        public static String firstAttack = "So you are the dangerous boy my boss have told me about- Loks like it's goint to be easier than i thought.\t"
-                + " Do you know how to knock yourself yet-\n What an amature you are come here so i can kick you!\t"
+        public static String firstAttack = "So you are the dangerous boy my boss have told me about- Looks like it's going to be easier than I thought.\t"
+                + " Do you know how to knock yourself yet-\n What an amateur you are come here so I can kick you!\t"
                 + " Well lets get on with it, shall we-";
     }
     public static final String[] itemDialog = new String[]{

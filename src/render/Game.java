@@ -36,6 +36,7 @@ public class Game extends Render {
      * world.setOffset(int x,int y)
      */
     public Player focus;
+    public Player currentFightingOp;
     public BufferedImage before;
 
     /**
@@ -244,21 +245,26 @@ public class Game extends Render {
         } else if (temp.getRed() != 0 && !this.world.isPoortal(x,y) && !this.world.isWorldRise(x, y)
                 && !(temp.equals(new Color(0xff000000)) || temp.equals(new Color(0xffffffff)))) {		// omPlayer
             if (Dialogs.endof && !pickNow) {
-                Player cur = world.getPlayer(x,y);
-                this.focus.action = (cur.lvl%2 == 0?"dialog":"dialog-fight");
+                currentFightingOp = world.getPlayer(x,y);
+                this.focus.action = (currentFightingOp.lvl%2 == 0?"dialog":"dialog-fight");
                 //fight = true;
-                if (cur.x > focus.x) {
-                    cur.direciton = 1;//Vänster
-                } else if (cur.x != focus.x) {
-                    cur.direciton = 2;//höger
+                if (currentFightingOp.x > focus.x) {
+                    currentFightingOp.direciton = 1;//Vänster
+                } else if (currentFightingOp.x != focus.x) {
+                    currentFightingOp.direciton = 2;//höger
                 }
-                if (cur.y > focus.y) {
-                    cur.direciton = 3; //upp
-                } else if (cur.y != focus.y) {
-                    cur.direciton = 0; //ner
+                if (currentFightingOp.y > focus.y) {
+                    currentFightingOp.direciton = 3; //upp
+                } else if (currentFightingOp.y != focus.y) {
+                    currentFightingOp.direciton = 0; //ner
                 }
                 try{
-                    Dialogs.initDialog("\t"+Dialogs.characterDialog[cur.lvl]);
+                    if( currentFightingOp.health >0 )
+                        Dialogs.initDialog("\t"+Dialogs.characterDialog[currentFightingOp.lvl]);
+                    else{
+                        this.focus.action = "dialog";
+                        Dialogs.initDialog("\t"+Dialogs.EnemyCalls.defeatedEnemy);
+                    }
                 }catch(IndexOutOfBoundsException e){
                     Dialogs.endof=true;
                     Dialogs.nextMessage();
