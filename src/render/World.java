@@ -97,6 +97,7 @@ public class World implements Cloneable {
         this.items = new BufferedImage(this.alpha.getWidth() * radius, this.alpha.getHeight() * radius, BufferedImage.TYPE_INT_ARGB);
         gr = this.items.getGraphics();
         players.removeAll(players);
+        int i=0;
         for (int ix = 0; ix < this.alpha.getWidth(); ix++) {
             for (int iy = 0; iy < this.alpha.getHeight(); iy++) {
                 int ixy = this.alpha.getRGB(ix, iy);
@@ -123,6 +124,8 @@ public class World implements Cloneable {
                         //p.setChar("/res/Players/player" + (ip%2) + ".png");
                         p.setChar("/res/Players/player" + cp.getBlue() + ".png");
                         p.lvl = cp.getAlpha() -1;
+                        p.kills = i;
+                        i++;
                         players.add(p);
                     }
                 }

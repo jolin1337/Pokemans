@@ -23,7 +23,7 @@ public final class Dialogs {
                 + " Your first opponent waits for you up ahead!";
         public static String[] hellper = new String[]{
             "Hello you are doing well, now when you have come this far there is some more waiting. \t"
-            + "Litle further away you can see a green line that you can't pass until you have completed all levels of dungeon's in this section"
+            + "Litle further away you can see a green line that you can't pass until you have completed all levels of dungeon's in this section. "
             + "Only then you'll pass the barrier and can continue, good luck."
         };
     }
