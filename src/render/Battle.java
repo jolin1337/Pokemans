@@ -162,7 +162,7 @@ public class Battle extends Render {
         double youRatio = (double) you.health / (double) you.maxHealth; // förändringsfaktorn på nuvarande health och max health för you Playern
         textDrawer.SetString(".");                                      // rensa textDrawers buffert
         textDrawer.SetColor("black");                                   // sätt textDrawers font-color till svart
-        g.setColor(blk);                                                // sätt Graphics färj till "svart"
+        g.setColor(blk);                                                // sätt Graphics färg till "svart"
         g.fillRoundRect(10, 10, 120, 34, 5, 5);                         //Motståndarens bakgrundsruta
         g.fillRoundRect(270, 200, 120, 44, 5, 5);                       //Spelarens bakgrundsruta
         g.setColor(ylw);
@@ -170,9 +170,9 @@ public class Battle extends Render {
         g.fillRoundRect(x + 2, y + 2, 116, 40, 5, 5);                   //Spelarens förgrundsruta
 
         //Motståndarens healthbar
-        g.setColor(blk);                                                // sätt Graphics färj till "svart" igen
+        g.setColor(blk);                                                // sätt Graphics färg till "svart" igen
         textDrawer.SetString(you.name).PrintAt(g, 20, 17);              // rita ut motståndarens namn
-        textDrawer.SetString("Lv " + you.lvl).PrintAt(g, 97, 17);       // och motståndarens lvl
+        textDrawer.SetString("Lv " + you.lvl).PrintAt(g, 92, 17);       // och motståndarens lvl
         g.fillRect(20, 30, 104, 6);                                     // måla ut motståndarens grafiska healthbars bakgrund
         g.setColor((youRatio > 0.5 ? hltgrn : (youRatio > 0.1 ? hltylw : hltred)));// sätt färgen beroende på hur mycket health du har kvar
         g.fillRect(22, 32, (int) Math.round(youRatio * 100), 2);        // måla ut motståndarens grafiska healthbars färj
@@ -283,9 +283,9 @@ public class Battle extends Render {
                     if( you_turn )                                                  // om det är motståndarens tur
                         me.health -= getCurrentPlayer().damages.getDamageParam(0);                                            // nuvarande konstant värde (10hp)
                     else                                                            // annars är det spelarens tur
-                        you.health -= 10;                                           // nuvarande konstant värde (10hp)
+                        you.health -= 10;                                           // nuvarande konstant värde (10HP)
                     actionText = getCurrentPlayer().name + " used TACKLE!\n. \n " + // ändrar status medelandet( viktigt att den innehåller nyckelordet "used"
-                            getCurrentPlayer().name + " has lost " + 10 + "hp";
+                            getCurrentPlayerInverse().name + " has lost 10 HP";
                 }
                 else if( menupos > 0 && menupos < 4 ){                              // om det inte är tackle vi har angivit så blir det denna formell som avgör dmg på motståndaren
                                                                                     // dmg är variabeln som blir så mycket skada som spelaren tar
@@ -293,11 +293,11 @@ public class Battle extends Render {
                     getCurrentPlayerInverse().health -= dmg;                        // tar bort skadan från spelaren
                                                                                     // sätter status medelandet med tecken på att spelaren skadade sin motståndare ( vickitgt att ha med nyckelhordet "used" )
                     actionText = getCurrentPlayer().name + " used " + getCurrentPlayer().damages.getDamageParamName(menupos) + "!\n. \n " + 
-                            getCurrentPlayerInverse().name + (dmg>0?getCurrentPlayerInverse().name + " has lost " + dmg + "hp":" missed the attack");
+                            (dmg>0?getCurrentPlayerInverse().name + " has lost " + dmg + "HP":" missed the attack");
                 }
                 try {
                     paint(getGraphics());                                           // refresha grafiken 
-                    Thread.sleep(3000);                                             // visa cool punch bild
+                    Thread.sleep(3);                                                // visa cool punch bild
                 } catch (InterruptedException ex) {}   
                 catch(NullPointerException e){}
                 you_turn = !you_turn;                                               // ändrar turen

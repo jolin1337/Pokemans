@@ -248,7 +248,7 @@ public class Runner extends JFrame implements Runnable {
         }
         if( fight.exitCode > 0 ){
             game.fight = false;
-            if( game.focus.health <= 0 ){
+            if( fight.me.health <= 0  ){
                 fight.clear();
                 this.removeKeyListener(game.eHandle);
                 this.remove(game);
@@ -272,8 +272,8 @@ public class Runner extends JFrame implements Runnable {
                 game.focus.kills++;
                 if(game.focus.kills%2 == 1)
                     game.focus.lvl++;
-                game.currentFightingOp.copyChar(boss);
             }
+            game.currentFightingOp.copyChar(boss);
             fight.clear();
             game.setVisible(true);
             menurender.setVisible(false);
