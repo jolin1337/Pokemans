@@ -49,9 +49,11 @@ public class Sound {
                     while(clip.isRunning());
                 }*/
                 clip.stop();
-                Sound.sounds.get(index).interrupt();
-                Sound.sounds.remove(index);
-                Sound.r.remove(index);
+                if(Sound.sounds.size()<index){
+                    Sound.sounds.get(index).interrupt();
+                    Sound.sounds.remove(index);
+                    Sound.r.remove(index);
+                }
             }
         });
         try{

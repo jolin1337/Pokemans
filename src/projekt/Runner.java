@@ -258,11 +258,10 @@ public class Runner extends JFrame implements Runnable {
                 game.setBounds(0, 0, WIDTH, HEIGHT);
                 this.add(game);
                 
-                game.setVisible(false);
-                menurender.setVisible(true);
+                game.setVisible(true);
+                game.paintProps = true;
+                menurender.setVisible(false);
                 fight.setVisible(false);
-                menu=true;
-                menurender.exitCode = 0;
                 game.focus.health = game.focus.maxHealth;
                 Sound.stopAllSound();
                 Sound.playSound("hitros.wav");

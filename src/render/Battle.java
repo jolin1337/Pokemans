@@ -2,6 +2,8 @@ package render;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import projekt.event.Keys;
 
 /**
@@ -59,6 +61,12 @@ public class Battle extends Render {
     protected boolean temp_var = false; 
 
     /**
+     * The battle animations
+     */
+    private Transition __transition = new Transition();
+    private int typeof_transition;
+    
+    /**
      * Konstruktorn sätter upp vem som skall börja och förbereder spelets start
      * @param c1 Character 1, första spelaren
      * @param c2 Character 2, andra spelaren
@@ -68,12 +76,14 @@ public class Battle extends Render {
         you = c2;                                                   // sätter you variabeln till att bli andra spelaren
         you_turn = Math.random()<0.5?true:false;                    // en random funktion avgör om vem som skall börja
         actionText = "What will "+getCurrentPlayer().name+" do?";   // default medelande på skärmen
+        
         setSize(400, 400);                                          // storleken på rutan är alltid 400x400 i dimmension
         setBackground(Color.white);                                 // bakgrundsfärgen skall vara vit
         setFocusable(false);                                        // så att keyeventen blir på "the main frame"
         /*
          * while (true) { Update(getGraphics()); }                  // tidigare main-loop för att köra fighten externt
          */
+        __transition.Speed = 15;
     }
 
     /**
@@ -82,6 +92,12 @@ public class Battle extends Render {
      */
     @Override
     public void tick(boolean[] keys) {
+        if( keys[Keys.esc] ){
+            __transition.index=0;
+            clear();
+        }
+        if ( __transition.index >0 )
+            return;
         if( you_turn ){                                         // om det är motståndarens tur så autogenererar vi hans drag
             keys[Keys.a] = true;                                // han vill trycka på 'a'
             menupos = 0;                                        // när menupos = 0 ( dvs Attack )
@@ -118,7 +134,7 @@ public class Battle extends Render {
         }
         if (keys[Keys.a] && !temp_var || keys[Keys.a] && you_turn){// om spelaren trycket ner tangenten 'a' och inte håller nere den eller om det är datorn som skall autogenereras
             Action(menupos);                                    // gör nuvarande menyallternativ
-            temp_var = true;                                    // temp_var blir true för att undvika en bugg(se variabelns decklaration)
+            temp_var = true && !you_turn;                                    // temp_var blir true för att undvika en bugg(se variabelns decklaration)
         }
         if (!keys[Keys.a] && temp_var)                          // buggfix 
             temp_var = false;
@@ -210,6 +226,10 @@ public class Battle extends Render {
         you.drawChar(g, getWidth() - 170, 20, 100, 100, this);
         you.direciton = temp_direkt;
         
+        if( __transition.index > 0 ) {
+            __transition.Transitions[getCurrentTransition()].animate(g);
+        }
+        
         //Statusmenu + Actionmenu
         g.setColor(blk);                                            // sätt färjen till "svart"
         g.fillRect(0, 250, 400, 150);                               // måla bakgrunden av panelen
@@ -230,7 +250,7 @@ public class Battle extends Render {
         g.setColor(new Color(0xFFFFFF));
         g.fillRoundRect(210, 260, 180, 110, 5, 5);                  // och sedan arean av Actionmenyn osv
 
-        if( !actionText.contains("used") ){                         // om spelarna inte befinner sig i attack mode så målar vi ut menyallternativen
+        if ( __transition.index <= 0 ) {                         // om spelarna inte befinner sig i attack mode så målar vi ut menyallternativen
             //Menu items
             g.setColor(blk);                                        // nästan svart markör
 
@@ -242,32 +262,6 @@ public class Battle extends Render {
             //Cursor position
             int[] curpos[] = {new int[]{215, 285}, new int[]{317, 285}, new int[]{215, 325}, new int[]{317, 325}};
             g.fillPolygon(new int[]{curpos[menupos][0], curpos[menupos][0] + 9, curpos[menupos][0]}, new int[]{curpos[menupos][1], curpos[menupos][1] + 9, curpos[menupos][1] + 18}, 3);
-        }
-        else{                                                       // om någon av spelarna skall slå den andra spelaren
-            // Epic punch
-            Color p = new Color(255,55,55);
-            if( you_turn ){                                         // om det är motståndarens tur
-                g.setColor(p);
-                g.fillRect(150, getHeight() - 240, 40, 40);
-                p = p.darker();
-                g.setColor(p);
-                g.fillRect(130, getHeight() - 240, 40, 40);
-                p = p.darker();
-                p = p.darker();
-                g.setColor(p);
-                g.fillRect(140, getHeight() - 260, 40, 40);
-            }
-            else{                                                   // om det är spelarens tur
-                g.setColor(p);
-                g.fillRect(getWidth() - 170, 30, 20, 20);
-                p = p.darker();
-                g.setColor(p);
-                g.fillRect(getWidth() - 160, 30, 20, 20);
-                p = p.darker();
-                p = p.darker();
-                g.setColor(p);
-                g.fillRect(getWidth() - 164, 40, 20, 20);
-            }
         }
         
     }
@@ -295,11 +289,8 @@ public class Battle extends Render {
                     actionText = getCurrentPlayer().name + " used " + getCurrentPlayer().damages.getDamageParamName(menupos) + "!\n. \n " + 
                             (dmg>0?getCurrentPlayerInverse().name + " has lost " + dmg + "HP":" missed the attack");
                 }
-                try {
-                    paint(getGraphics());                                           // refresha grafiken 
-                    Thread.sleep(3);                                                // visa cool punch bild
-                } catch (InterruptedException ex) {}   
-                catch(NullPointerException e){}
+                __transition.Speed = menupos;
+                __transition.Transitions[getCurrentTransition()].animate(getGraphics());                                               // visa cool punch bild
                 you_turn = !you_turn;                                               // ändrar turen
                 if( you.health <= 0 )                                               // kollar om you har dött under slaget
                     exitCode = 2;                                                   // sätter en exitCode(se render.Render) till 2
@@ -340,7 +331,18 @@ public class Battle extends Render {
                 actionText = "Magic, you say?";                                     // status medelande med ett vicktigt nyckelord "Magic"
                 break;
             case 3: // Run
-                exitCode = 1;                                                       // om man har valt att fly från denna fight
+                exitCode = Math.random()>0.5?1:0;                                   // om man har valt att fly från denna fight
+                if(exitCode == 0)
+                    actionText = getCurrentPlayer().name + " \n try to run but faild!";
+                else
+                    actionText = getCurrentPlayer().name + " used run";
+                you_turn = !you_turn;
+                try {
+                    print(getGraphics());
+                    Thread.sleep(1000);
+                } 
+                catch( InterruptedException ex ) {}
+                catch( NullPointerException ex ) {}
                 break;
             default:
         }
@@ -350,6 +352,7 @@ public class Battle extends Render {
      * återställer hela denna klassen så att den kan användas flera gånger i spelet
      */
     public void clear(){
+        __transition.index = 0;
         exitCode = 0;                                                               // exitCode == 0
         subMenu = false;                                                            // topmenyn
         menuOptions[0] = "ATTACK";                                                  // default topmenyallternativ
@@ -374,6 +377,14 @@ public class Battle extends Render {
      */
     public final Player getCurrentPlayerInverse(){
         return (you_turn?me:you);
+    }
+    
+    public final int getCurrentTransition(){
+        return (you_turn?Transition.Type.FightMe:Transition.Type.FightYou);
+    }
+    
+    public final int getCurrentTransitionInverse(){
+        return (you_turn?Transition.Type.FightYou:Transition.Type.FightMe);
     }
 }   
 

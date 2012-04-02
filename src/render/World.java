@@ -43,7 +43,6 @@ public class World implements Cloneable {
     ImageIcon overlay;
     BufferedImage grafik;
     BufferedImage alpha;
-    BufferedImage items;
     private int id = 0;
     private ArrayList<Player> players = new ArrayList<Player>();
 
@@ -94,8 +93,6 @@ public class World implements Cloneable {
         gr = this.alpha.getGraphics();
         gr.drawImage(temp.getImage(), 0, 0, null);
 
-        this.items = new BufferedImage(this.alpha.getWidth() * radius, this.alpha.getHeight() * radius, BufferedImage.TYPE_INT_ARGB);
-        gr = this.items.getGraphics();
         players.removeAll(players);
         int i=0;
         for (int ix = 0; ix < this.alpha.getWidth(); ix++) {

@@ -20,6 +20,8 @@ public final class DisplayPropsFromChar {
     public boolean gameEnabled =true;
     public boolean hasManipualted = false;
     
+    public int curpos = 0;
+    
     public DisplayPropsFromChar(){
         init( null, 0, 0 );
     }
@@ -71,31 +73,6 @@ public final class DisplayPropsFromChar {
             drawTexts.SetColor("white").SetString(Char.name).PrintAt(g, Char.x, 50);
         }
         
-        g.setColor(Color.white);
-        drawTexts.SetColor("Black").SetString("Strength, "+Char.lvl).PrintAt(g, Char.x - 140, Char.y);
-        drawTexts.SetColor("green").SetString("Health, "+Char.health).PrintAt(g, Char.x - 140, Char.y + 40);
-        drawTexts.SetColor("green").SetString("Something1, "+Char.lvl).PrintAt(g, Char.x + 80, Char.y);
-        drawTexts.SetColor("Black").SetString("Something2, "+Char.health).PrintAt(g, Char.x + 80, Char.y + 40);
-
-        if( !hasManipualted && gameEnabled ){
-            if(gameEnabled){
-                drawTexts.SetColor("white").SetString("Manipulate").PrintAt(g, Char.x - drawTexts.getStringLength()/2, Char.y + 100);
-                drawTexts.SetColor("red").SetString("\"press a\"").PrintAt(g, Char.x - drawTexts.getStringLength()/2 + 70, Char.y + 100);
-            }
-        }
-        else if(gameEnabled){
-            drawTexts.SetColor("white").SetString("Use: ").PrintAt(g, Char.x - 140, Char.y + 100);
-            drawTexts.SetColor("red").SetString("arrow keys").PrintAt(g, Char.x - 110, Char.y + 100);
-            drawTexts.SetColor("white").SetString("to manipulate the players stats").PrintAt(g, Char.x - 30, Char.y + 100);
-        }
-        
-        if ((int) Char.direciton > 3) {
-            Char.direciton = 0;
-        }
-        if ((int) Char.frame > 3) {
-            Char.frame = 0;
-        }
-        
         //BufferedImage tool = Char.c.getSubimage(radius * (int) (Char.incr > 1.0 && Char.frame != 0 ? (Char.frame + 4) : Char.frame), 20 * Char.direciton, radius, 20);
         //g.drawImage(tool, Char.x - 25, Char.y - 25,100,100, null);
         Char.drawCharCenter(g, Char.x + 100 + 25, Char.y + 100 + 25);
@@ -113,6 +90,39 @@ public final class DisplayPropsFromChar {
         
         counter++;
         if ( counter >= 100)counter = 0;
+        
+        g.setColor(Color.white);
+        drawTexts.SetColor("Black").SetString("Strength, "+Char.lvl).PrintAt(g, Char.x - 140, Char.y);
+        drawTexts.SetColor("green").SetString("Health, "+Char.health).PrintAt(g, Char.x - 140, Char.y + 40);
+        drawTexts.SetColor("green").SetString("Something1, "+Char.lvl).PrintAt(g, Char.x + 80, Char.y);
+        drawTexts.SetColor("Black").SetString("Something2, "+Char.health).PrintAt(g, Char.x + 80, Char.y + 40);
+        
+        if( !hasManipualted && gameEnabled ){
+            if(gameEnabled){
+                drawTexts.SetColor("white").SetString("Manipulate").PrintAt(g, Char.x - drawTexts.getStringLength()/2, Char.y + 100);
+                drawTexts.SetColor("red").SetString("\"press a\"").PrintAt(g, Char.x - drawTexts.getStringLength()/2 + 70, Char.y + 100);
+            }
+        }
+        else if(gameEnabled){
+            int[] curpos[] = {new int[]{Char.x - 160, Char.y}, new int[]{Char.x - 160, Char.y + 40}, new int[]{Char.x + 60, Char.y}, new int[]{Char.x + 60, Char.y + 40}};
+            g.fillPolygon(new int[]{curpos[this.curpos][0], curpos[this.curpos][0] + 9, curpos[this.curpos][0]}, new int[]{curpos[this.curpos][1], curpos[this.curpos][1] + 9, curpos[this.curpos][1] + 18}, 3);
+            
+            drawTexts.SetColor("white").SetString("Use: ").PrintAt(g, Char.x - 140, Char.y + 100);
+            drawTexts.SetColor("red").SetString("arrow keys").PrintAt(g, Char.x - 110, Char.y + 100);
+            drawTexts.SetColor("white").SetString("to manipulate the players stats").PrintAt(g, Char.x - 30, Char.y + 100);
+            
+            if(Char.kills > 0)
+                drawTexts.SetColor("black").SetString("You have " + Char.kills +  " points left to spend").PrintAt(g, Char.x - 110, Char.y + 120);
+            else
+                drawTexts.SetColor("black").SetString("You have no points to spend").PrintAt(g, Char.x - 80, Char.y + 120);
+        }
+        
+        if ((int) Char.direciton > 3) {
+            Char.direciton = 0;
+        }
+        if ((int) Char.frame > 3) {
+            Char.frame = 0;
+        }
     }
 
     public final void setName(String duD) {
