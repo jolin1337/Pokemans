@@ -29,7 +29,7 @@ public final class Dialogs {
     }
 
     public static final class EnemyCalls {
-        public static String defeatedEnemy = "H-how is it possible..? You won...\n I feel ashamed of myself.";
+        public static String defeatedEnemy = "H-how is it possible..? You won...\n I am worthless.";
 
         public static String firstAttack = "Aha, so it is you are the dangerous boy of whom my boss have told me about - You don't seem very dangerous to me, I guess it'll be easier than I thought kicking your ass!\t"
                 + " Do you know how to knock yourself yet-\n What an amateur you are come here so I can kick you!\t"
