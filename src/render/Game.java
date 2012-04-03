@@ -190,8 +190,21 @@ public class Game extends Render {
             props.hasManipualted=false;
             k[Keys.select] = false;
         }
-        if( paintProps && k[Keys.a] )
-            props.hasManipualted=true;
+        if( paintProps ){
+            if( k[Keys.a] )
+                props.hasManipualted=true;
+            if( (k[Keys.down] || k[Keys.up]) )
+                props.curpos += (k[Keys.down]?1:-1);
+            if( (k[Keys.left] || k[Keys.right]) )
+                props.curpos += (k[Keys.left]?2:-2);
+            if(props.curpos <0)
+                props.curpos*=-1;
+            props.curpos %= 4;
+            k[Keys.down] = false;
+            k[Keys.up] = false;
+            k[Keys.left] = false;
+            k[Keys.right] = false;
+        }
     }
 
     private boolean preformAction(boolean pickNow) {
@@ -216,6 +229,7 @@ public class Game extends Render {
             if (Dialogs.endof && !pickNow) {
                 this.focus.action = "dialog";
                 Player p = this.world.getPlayer(x, y);
+                this.world.removePlayer(p);
                 Dialogs.initDialog("\t"+Dialogs.itemDialog[p.lvl]);
                 this.focus.freeze = true;
             }
@@ -226,13 +240,6 @@ public class Game extends Render {
             ag.setColor(Color.white);
             ag.fillRect(x, y, 1, 1);
 
-            ag = this.world.items.createGraphics();
-            AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f);
-            Composite c = ag.getComposite();
-            ag.setComposite(composite);
-            ag.setColor(new Color(0, 0, 0, 0));
-            ag.fillRect(((int) this.focus.x2 + (int)(x - this.focus.x2/radius) * radius), ((int) this.focus.y2 + (int)(y - this.focus.y2/radius) * radius) - 8, radius, 20);
-            ag.setComposite(c);
             int b = temp.getBlue();
             if (b != 0) {
                 this.focus.addItem(b);
@@ -339,8 +346,9 @@ public class Game extends Render {
             //g.setFont(new Font("Lucida Typewriter Regular", Font.BOLD, 12));
             try {
                 this.drawDialog(Dialogs.message[Dialogs.getIndex()]);
-            } catch (NullPointerException e) {
-            }
+            } 
+            catch (NullPointerException e) {}
+            catch(ArrayIndexOutOfBoundsException ex) {}
         }
         try{// unloking the wall levels
             if(world.path.contains("world11")){

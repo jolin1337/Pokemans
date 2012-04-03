@@ -248,7 +248,7 @@ public class Runner extends JFrame implements Runnable {
         }
         if( fight.exitCode > 0 ){
             game.fight = false;
-            if( game.focus.health <= 0 ){
+            if( fight.me.health <= 0  ){
                 fight.clear();
                 this.removeKeyListener(game.eHandle);
                 this.remove(game);
@@ -258,11 +258,10 @@ public class Runner extends JFrame implements Runnable {
                 game.setBounds(0, 0, WIDTH, HEIGHT);
                 this.add(game);
                 
-                game.setVisible(false);
-                menurender.setVisible(true);
+                game.setVisible(true);
+                game.paintProps = true;
+                menurender.setVisible(false);
                 fight.setVisible(false);
-                menu=true;
-                menurender.exitCode = 0;
                 game.focus.health = game.focus.maxHealth;
                 Sound.stopAllSound();
                 Sound.playSound("hitros.wav");
@@ -272,8 +271,8 @@ public class Runner extends JFrame implements Runnable {
                 game.focus.kills++;
                 if(game.focus.kills%2 == 1)
                     game.focus.lvl++;
-                game.currentFightingOp.copyChar(boss);
             }
+            game.currentFightingOp.copyChar(boss);
             fight.clear();
             game.setVisible(true);
             menurender.setVisible(false);

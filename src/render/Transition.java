@@ -9,7 +9,7 @@ import java.awt.Rectangle;
  * @author Johan Lindskogen
  */
 public final class Transition {
-    int sleep;
+        int sleep;
 
 	public static class Type {
 		public static final int Fade = 0;
@@ -17,6 +17,8 @@ public final class Transition {
 		public static final int Stripes = 2;
 		public static final int SlideUp = 3;
 		public static final int Blank = 4;
+                public static final int FightYou = 5;
+                public static final int FightMe = 6;
 	};
         public int Speed = 5;
         public interface Anim{
@@ -28,6 +30,24 @@ public final class Transition {
             new Anim(){ 
                 int s=-1;
                 public void animate(Graphics g){
+                    if(g == null){
+                        index += Speed;
+                        if(s == -1)
+                            s = sleep;
+                        if(index <= 90 - (90 % Speed) || index >= 90 - (90 % Speed) + sleep)
+                            index += Speed;
+                        else
+                            sleep-=Speed;
+                        if (index == 90 - (90 % Speed)) {
+                            dirBool = true;
+                        }
+                        else if (dirBool && index >= 180 - (180 % Speed) + sleep) {
+                                dirBool = false;
+                                index = 0;
+                                sleep = s;
+                        }
+                        return;
+                    }
                     int speed = Speed;
                     if(s == -1)
                         s = sleep;
@@ -50,6 +70,17 @@ public final class Transition {
             // slideUpDown
             new Anim(){ 
                 public void animate(Graphics g){
+                    if(g == null){
+                        index += Speed;
+                        if (index >= height) {
+                            dirBool = true;
+                        }
+                        if (index <= 0) {
+                            index = 0;
+                            dirBool = false;
+                        }
+                        return;
+                    }
                     g.setColor(Color.BLACK);
                     int speed = Speed;
                     if (index >= height) {
@@ -76,6 +107,17 @@ public final class Transition {
             // stripes
             new Anim(){ 
                 public void animate(Graphics g){
+                    if(g == null){
+                        index += Speed;
+                        if (index > 0) {
+                                dirBool = true;
+                        }
+                        if (index >= 400) {
+                                dirBool = false;
+                                index = 0;
+                        }
+                        return;
+                    }
                     int antal = 15;
                     int speed = Speed;
                     g.setColor(Color.BLACK);
@@ -101,6 +143,20 @@ public final class Transition {
             // slideup
             new Anim() {
                 public void animate(Graphics g) {
+                    if(g == null){
+                        index += Speed;
+                        
+                        if (index + Speed < height / 2) {
+                            if (index > 0) {
+                                    dirBool = true;
+                            }
+                            if (index + Speed >= height / 2) {
+                                    dirBool = false;
+                                    index = 0;
+                            }
+                        }
+                        return;
+                    }
                     g.setColor(Color.BLACK);
                     int speed = Speed;
                     if (index + speed < height / 2) {
@@ -121,6 +177,10 @@ public final class Transition {
             // Blank
             new Anim() {
                 public void animate(Graphics g) {
+                    if(g == null){
+                        index += Speed;
+                        return;
+                    }
                     int speed = Speed;
                     if (!dirBool) {
                             index += speed;
@@ -139,8 +199,75 @@ public final class Transition {
                     }
                     g.fillRect(x, y, width, height);
                 }
+            },
+            // FightYou animation 1, 0
+            new Anim() {
+                public void animate(Graphics g) {
+                    Fight(g,0, Speed);
+                }
+            },
+            // FightMe animation 1, 0
+            new Anim() {
+                public void animate(Graphics g) {
+                    Fight(g,1, Speed);
+                }
             }
         };
+        private void Fight(Graphics g,int who, int how){
+            if(g == null){
+                index += 20;
+                return;
+            }
+            g.setColor(Color.red);
+            int speed = 5;
+            if( who%2 == 0 ){
+                if( how%4 == 0 ) {
+                    g.fillRect(350 - (int)(index*1.5), index + 50, index/speed, index/speed);
+                    g.fillRect(350 - (int)(index*1.5 - (10 - index/speed)), index - 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect(350 - (int)(index*1.5 + (10 + index/speed)), index - 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect(350 - (int)(index*1.5 - (10 - index/speed)), index + 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect(350 - (int)(index*1.5 + (10 + index/speed)), index + 10*index/speed + 50, index/speed, index/speed);
+                }
+                else if ( how%4 == 1 ){
+                    g.fillRect(350 - (int)(index*1.5), index + 50, index/speed, index/speed);
+                }
+                else if ( how%4 == 2 ){
+                    g.fillOval(350 - (int)(index*1.5), index + 50, index/speed, index/speed);
+                }
+                else{
+                    g.fillRect(350 - (int)(index*1.5), index + 50, index/speed, index/speed);
+                    g.fillRect(350 - (int)(index*1.5 - 10*index/speed), index - 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect(350 - (int)(index*1.5 + 10*index/speed), index - 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect(350 - (int)(index*1.5 - 10*index/speed), index + 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect(350 - (int)(index*1.5 + 10*index/speed), index + 10*index/speed + 50, index/speed, index/speed);
+                }
+            }
+            else if( who%2 == 1){
+                if( how%4 == 0 ) {
+                    g.fillRect((int)(index*1.5), 300 - index, 400/index, 1500/index);
+                    g.fillRect((int)(index*1.5 - (10 - index/speed)), 300 - index - 10*index/speed, 1500/index, 1500/index);
+                    g.fillRect((int)(index*1.5 + (10 + index/speed)), 300 - index - 10*index/speed, 1500/index, 1500/index);
+                    g.fillRect((int)(index*1.5 - (10 - index/speed)), 300 - index + 10*index/speed, 1500/index, 1500/index);
+                    g.fillRect((int)(index*1.5 + (10 + index/speed)), 300 - index + 10*index/speed, 1500/index, 1500/index);
+                }
+                else if ( how%4 == 1 ){
+                    g.fillRect((int)(index*1.5), 300 - index + 50, index/speed, index/speed);
+                }
+                else if ( how%4 == 2 ){
+                    g.fillOval((int)(index*1.5), 300 - index + 50, index/speed, index/speed);
+                }
+                else{
+                    g.fillRect((int)(index*1.5), index + 50, index/speed, index/speed);
+                    g.fillRect((int)(index*1.5 - 10*index/speed), 300 - index - 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect((int)(index*1.5 + 10*index/speed), 300 - index - 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect((int)(index*1.5 - 10*index/speed), 300 - index + 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect((int)(index*1.5 + 10*index/speed), 300 - index + 10*index/speed + 50, index/speed, index/speed);
+                }
+            }
+            index +=speed;
+            if( index >= 400 )
+                index=0;
+        }
         
 	private int x = 0, y = 0, width = 415, height = 415;
 	public int index = 0;

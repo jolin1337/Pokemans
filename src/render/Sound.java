@@ -33,7 +33,7 @@ public class Sound {
                         clip.loop(Clip.LOOP_CONTINUOUSLY);
                         runned=true;
                         return;
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         runned=true;
                     }
                 }
@@ -49,20 +49,28 @@ public class Sound {
                     while(clip.isRunning());
                 }*/
                 clip.stop();
-                Sound.sounds.get(index).interrupt();
-                Sound.sounds.remove(index);
-                Sound.r.remove(index);
+                if(Sound.sounds.size()<index){
+                    Sound.sounds.get(index).interrupt();
+                    Sound.sounds.remove(index);
+                    Sound.r.remove(index);
+                }
             }
         });
-        sounds.add(new Thread( r.get(r.size()-1) ));
-        sounds.get(sounds.size()-1).setName(url);
-        sounds.get(sounds.size()-1).start();
+        try{
+            sounds.add(new Thread( r.get(r.size()-1) ));
+            sounds.get(sounds.size()-1).setName(url);
+            sounds.get(sounds.size()-1).start();
+        }
+        catch(Throwable e){
+            
+        }
     }
 
     public static synchronized void stopSound(int index) {
         if(sounds.size()>index && index >= 0){
             r.get(index).run();
             //sounds.remove(index);
+            int i=0;
         }
     }
 
