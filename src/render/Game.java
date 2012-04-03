@@ -45,7 +45,6 @@ public class Game extends Render {
     public Game() {
         props.setName("Dud");
         props.setDisplayName(new ImageIcon(getClass().getResource("/res/intro/dud.png")));
-        
         focus = new Player(15, 17);
         focus.setChar("/res/CharMain/firehero.png");
         focus.name="Dud";
@@ -188,6 +187,7 @@ public class Game extends Render {
         if( select ){
             paintProps=!paintProps;
             props.hasManipualted=false;
+            props.copyChar(focus);
             k[Keys.select] = false;
         }
         if( paintProps ){
@@ -437,7 +437,7 @@ public class Game extends Render {
                 }
                 String pa = "";
                 try {
-                    pa = getClass().getResource("/res/worlds/world" + world.pos[2]).getPath();
+                    pa = "/res/worlds/world" + world.pos[2];
                 } catch (NullPointerException e) {
                     this.exitCode = 1;
                     System.out.println("unable to locate the world: /res/worlds/world" + world.pos[2]);

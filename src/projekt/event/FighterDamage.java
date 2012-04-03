@@ -30,6 +30,12 @@ public class FighterDamage {
     double HEADBUTT = 0;
     
     /**
+     * MAGIC (4)
+     * Magi är inget att leka med och när du inte är så erfaren kan det hända att en olycka inträffar, annvänd brara magi när du ver vad du gör!
+     */
+    double MAGIC = 0;
+    
+    /**
     *
     * The constructor for FighterDamage
     */
@@ -42,15 +48,14 @@ public class FighterDamage {
      * @return returnerar skadan för den utavalda attacken med intex i;
      */
     public double getDamageParam(int i){
-        if( i == 0)
-            return TACKLE;
-        if( i == 1)
-            return PUNCH;
-        if( i == 2)
-            return KICK;
-        if( i == 3)
-            return HEADBUTT;
-        return 0;
+        switch(i){
+            case 0:  return TACKLE;
+            case 1:  return PUNCH;
+            case 2:  return KICK;
+            case 3:  return HEADBUTT;
+            case 4:  return MAGIC;
+            default: return 0;
+        }
     }
     
     /**
@@ -59,14 +64,15 @@ public class FighterDamage {
      * @param v värdet som den utvalda attacken skall ha
      */
     public void setDamageParam(int i, double v){
-        if( i == 0)
-            TACKLE = v;
-        if( i == 1)
-            PUNCH = v;
-        if( i == 2)
-            KICK = v;
-        if( i == 3)
-            HEADBUTT = v;
+        switch(i){
+            case 0:  TACKLE = v;
+            case 1:  PUNCH = v;
+            case 2:  KICK = v;
+            case 3:  HEADBUTT = v;
+            case 4:  MAGIC = v;
+            default:
+                break;
+        }
     }
 
     /**
@@ -75,15 +81,14 @@ public class FighterDamage {
      * @return en sträng som motsvarar passande namn på attacken
      */
     public String getDamageParamName(int i) {
-        if( i == 0)
-            return "TACKLE";
-        if( i == 1)
-            return "PUNCH";
-        if( i == 2)
-            return "KICK";
-        if( i == 3)
-            return "HEADBUTT";
-        return "";
+        switch(i){
+            case 0:  return "TACKLE";
+            case 1:  return "PUNCH";
+            case 2:  return "KICK";
+            case 3:  return "HEADBUTT";
+            case 4:  return "MAGIC";
+            default: return "";
+        }
     }
     
     

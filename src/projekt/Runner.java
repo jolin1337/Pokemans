@@ -246,9 +246,9 @@ public class Runner extends JFrame implements Runnable {
                 Sound.playSound("teleporter.wav");
             }
         }
-        if( fight.exitCode > 0 ){
+        if( fight.exitCode > 0 && game.fight ){
             game.fight = false;
-            if( fight.me.health <= 0  ){
+            if( fight.me.health <= 0  ){            // LOST
                 fight.clear();
                 this.removeKeyListener(game.eHandle);
                 this.remove(game);
@@ -267,12 +267,16 @@ public class Runner extends JFrame implements Runnable {
                 Sound.playSound("hitros.wav");
                 return;
             }
-            if( fight.exitCode == 2 ){
+            if( fight.exitCode == 2 ){              // WIN
                 game.focus.kills++;
-                if(game.focus.kills%2 == 1)
+                game.currentFightingOp.copyChar(boss);
+                if(game.focus.kills%2 == 1){
                     game.focus.lvl++;
+                    game.focus.health = game.focus.maxHealth;
+                }
             }
-            game.currentFightingOp.copyChar(boss);
+                                                    // DEFAULT
+            game.focus.copyChar(fight.me);
             fight.clear();
             game.setVisible(true);
             menurender.setVisible(false);

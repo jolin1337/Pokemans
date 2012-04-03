@@ -2,6 +2,7 @@ package projekt.story;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import render.PFont;
@@ -94,14 +95,12 @@ public final class DisplayPropsFromChar {
         g.setColor(Color.white);
         drawTexts.SetColor("Black").SetString("Strength, "+Char.lvl).PrintAt(g, Char.x - 140, Char.y);
         drawTexts.SetColor("green").SetString("Health, "+Char.health).PrintAt(g, Char.x - 140, Char.y + 40);
-        drawTexts.SetColor("green").SetString("Something1, "+Char.lvl).PrintAt(g, Char.x + 80, Char.y);
-        drawTexts.SetColor("Black").SetString("Something2, "+Char.health).PrintAt(g, Char.x + 80, Char.y + 40);
+        drawTexts.SetColor("green").SetString("Magic, "+Char.magicAbe).PrintAt(g, Char.x + 80, Char.y);
+        drawTexts.SetColor("Black").SetString("XP, "+Char.kills*100).PrintAt(g, Char.x + 80, Char.y + 40);
         
         if( !hasManipualted && gameEnabled ){
-            if(gameEnabled){
-                drawTexts.SetColor("white").SetString("Manipulate").PrintAt(g, Char.x - drawTexts.getStringLength()/2, Char.y + 100);
-                drawTexts.SetColor("red").SetString("\"press a\"").PrintAt(g, Char.x - drawTexts.getStringLength()/2 + 70, Char.y + 100);
-            }
+            drawTexts.SetColor("white").SetString("Manipulate").PrintAt(g, Char.x - drawTexts.getStringLength()/2, Char.y + 100);
+            drawTexts.SetColor("red").SetString("\"press a\"").PrintAt(g, Char.x - drawTexts.getStringLength()/2 + 70, Char.y + 100);
         }
         else if(gameEnabled){
             int[] curpos[] = {new int[]{Char.x - 160, Char.y}, new int[]{Char.x - 160, Char.y + 40}, new int[]{Char.x + 60, Char.y}, new int[]{Char.x + 60, Char.y + 40}};
@@ -131,5 +130,15 @@ public final class DisplayPropsFromChar {
 
     public void setDisplayName(ImageIcon dudText) {
         Char.displayName = dudText.getImage();
+    }
+
+    public void copyChar(Player p) {
+        int x=Char.x,y=Char.y,rad = Char.getRad();
+        Image dsp = Char.displayName;
+        Char.copyChar(p);
+        Char.displayName = dsp;
+        Char.x = x;
+        Char.y = y;
+        Char.setRad(rad);
     }
 }

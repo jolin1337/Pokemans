@@ -95,6 +95,7 @@ public class Player {
      * om det pågår en dialog med karaktären
      */
     String action = "";
+    public double magicAbe = 1;
 
     /**
      * Konstruktor för Player som tar emot x,y-position, radien r. 
@@ -492,5 +493,13 @@ public class Player {
         y = p.y;
         x2 = p.getX2();
         y2 = p.getY2();
+    }
+
+    public int getRad() {
+        return radius;
+    }
+
+    public void setRad(int rad) {
+        radius=rad;
     }
 }

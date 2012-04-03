@@ -214,13 +214,12 @@ public final class Transition {
             }
         };
         private void Fight(Graphics g,int who, int how){
-            if(g == null){
-                index += 20;
-                return;
-            }
-            g.setColor(Color.red);
             int speed = 5;
-            if( who%2 == 0 ){
+            index += speed;
+            if(g == null)
+                return;
+            g.setColor(Color.red);
+            if( who%2 == 0 ){           // You turn
                 if( how%4 == 0 ) {
                     g.fillRect(350 - (int)(index*1.5), index + 50, index/speed, index/speed);
                     g.fillRect(350 - (int)(index*1.5 - (10 - index/speed)), index - 10*index/speed + 50, index/speed, index/speed);
@@ -242,7 +241,7 @@ public final class Transition {
                     g.fillRect(350 - (int)(index*1.5 + 10*index/speed), index + 10*index/speed + 50, index/speed, index/speed);
                 }
             }
-            else if( who%2 == 1){
+            else if( who%2 == 1){           // Me turn
                 if( how%4 == 0 ) {
                     g.fillRect((int)(index*1.5), 300 - index, 400/index, 1500/index);
                     g.fillRect((int)(index*1.5 - (10 - index/speed)), 300 - index - 10*index/speed, 1500/index, 1500/index);
@@ -251,20 +250,19 @@ public final class Transition {
                     g.fillRect((int)(index*1.5 + (10 + index/speed)), 300 - index + 10*index/speed, 1500/index, 1500/index);
                 }
                 else if ( how%4 == 1 ){
-                    g.fillRect((int)(index*1.5), 300 - index + 50, index/speed, index/speed);
+                    g.fillRect((int)(index*1.5), 300 - index + 50, 1500/index, 1500/index);
                 }
                 else if ( how%4 == 2 ){
-                    g.fillOval((int)(index*1.5), 300 - index + 50, index/speed, index/speed);
+                    g.fillOval((int)(index*1.5), 300 - index + 50, 1500/index, 1500/index);
                 }
                 else{
-                    g.fillRect((int)(index*1.5), index + 50, index/speed, index/speed);
-                    g.fillRect((int)(index*1.5 - 10*index/speed), 300 - index - 10*index/speed + 50, index/speed, index/speed);
-                    g.fillRect((int)(index*1.5 + 10*index/speed), 300 - index - 10*index/speed + 50, index/speed, index/speed);
-                    g.fillRect((int)(index*1.5 - 10*index/speed), 300 - index + 10*index/speed + 50, index/speed, index/speed);
-                    g.fillRect((int)(index*1.5 + 10*index/speed), 300 - index + 10*index/speed + 50, index/speed, index/speed);
+                    g.fillRect((int)(index*1.5), index + 50, 1500/index, 1500/index);
+                    g.fillRect((int)(index*1.5 - 10*index/speed), 300 - index - 10*index/speed + 50, 1500/index, 1500/index);
+                    g.fillRect((int)(index*1.5 + 10*index/speed), 300 - index - 10*index/speed + 50, 1500/index, 1500/index);
+                    g.fillRect((int)(index*1.5 - 10*index/speed), 300 - index + 10*index/speed + 50, 1500/index, 1500/index);
+                    g.fillRect((int)(index*1.5 + 10*index/speed), 300 - index + 10*index/speed + 50, 1500/index, 1500/index);
                 }
             }
-            index +=speed;
             if( index >= 400 )
                 index=0;
         }

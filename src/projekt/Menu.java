@@ -72,7 +72,7 @@ public class Menu extends Render {
             //proj.addKeyListener(eHandle);
             Color col = new Color(0, 0, 0, 0);
 
-            img = new ImageIcon(getClass().getResource("/res/pokemans.png").getPath());
+            img = new ImageIcon(getClass().getResource("/res/pokemans.png"));
             setForeground(col);
             setBackground(col);
 

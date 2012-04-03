@@ -297,6 +297,23 @@ public class Battle extends Render {
                 else if( me.health <= 0 )                                           // kollar om me har dött under slaget
                     exitCode = 1;                                                   // sätter en exitCode(se render.Render) till 1
             }
+            if( actionText.contains("Magic") ){                                    // om spelaren har klickat på attack
+                if( menupos >= 0 && menupos < 4 ){                              // om det inte är tackle vi har angivit så blir det denna formell som avgör dmg på motståndaren
+                                                                                    // dmg är variabeln som blir så mycket skada som spelaren tar
+                    int dmg = (int)(Math.random()*getCurrentPlayer().damages.getDamageParam(4)*getCurrentPlayer().magicAbe/getCurrentPlayerInverse().magicAbe);
+                    getCurrentPlayerInverse().health -= dmg;                        // tar bort skadan från spelaren
+                                                                                    // sätter status medelandet med tecken på att spelaren skadade sin motståndare ( vickitgt att ha med nyckelhordet "used" )
+                    actionText = getCurrentPlayer().name + " used " + menuOptions[menupos] + "!\n. \n " + 
+                            (dmg>0?getCurrentPlayerInverse().name + " has lost " + dmg + "HP":" and missed the attack!");
+                }
+                __transition.Speed = menupos;
+                __transition.Transitions[getCurrentTransition()].animate(getGraphics());                                               // visa cool punch bild
+                you_turn = !you_turn;                                               // ändrar turen
+                if( you.health <= 0 )                                               // kollar om you har dött under slaget
+                    exitCode = 2;                                                   // sätter en exitCode(se render.Render) till 2
+                else if( me.health <= 0 )                                           // kollar om me har dött under slaget
+                    exitCode = 1;                                                   // sätter en exitCode(se render.Render) till 1
+            }
             selection = -1;                                                         // återgå till huvudmenyn
         }
         menupos = 0;                                                                // sätter menupos att peka på första menyallternativet

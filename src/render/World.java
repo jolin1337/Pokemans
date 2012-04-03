@@ -3,6 +3,7 @@ package render;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class World implements Cloneable {
                 }catch(Throwable e){
                     throw new RuntimeException("World,"+this.path+", does not exist!");
                 }
-        this.path = getClass().getResource(i).getPath();
+        this.path = i;
         this.loadWorld();
     }
 
@@ -76,18 +77,18 @@ public class World implements Cloneable {
         Graphics gr;
         Keys.status = "Loading world";
         System.out.println(this.path + "layout loaded.");
-        this.layout = new ImageIcon(this.path + "/layout.png");
+        this.layout = new ImageIcon(getClass().getResource(this.path + "/layout.png"));
 
         System.out.println("overlay loaded.");
-        this.overlay = new ImageIcon(this.path + "/overlay.png");
+        this.overlay = new ImageIcon(getClass().getResource(this.path + "/overlay.png"));
 
         System.out.println("graphics loaded.");
-        temp = new ImageIcon(this.path + "/graphics.png");
+        temp = new ImageIcon(getClass().getResource(this.path + "/graphics.png"));
         this.grafik = new BufferedImage(temp.getIconWidth(), temp.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         this.grafik.getGraphics().drawImage(temp.getImage(), 0, 0, null);
 
         System.out.println("alpha loaded.");
-        temp = new ImageIcon(this.path + "/alpha.png");
+        temp = new ImageIcon(getClass().getResource(this.path + "/alpha.png"));
         //System.out.println(temp.toString());
         this.alpha = new BufferedImage(temp.getIconWidth(), temp.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         gr = this.alpha.getGraphics();
