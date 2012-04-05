@@ -10,7 +10,8 @@ public final class Dialogs {
 
     public static final class Story {
 
-        public static final String story1 = "message. \"\"\"\n The gods realized in 1893 that the humans had lost their faith in a superior power. As the future could see into the future, the humans would walk straight into an eternal life in despair, if nothing is done. All the gods concluded that something had to be done. Somehow the humans had to be saved from their dark destiny. The gods act and picks a random dude that will infiltrate and save the humanity from within.\n\"\"\"\t"
+        public static final String story1 = "message. \"\"\"\n The gods realized in 1893 that the humans had lost their faith in a superior power. As the future could see into the future, the humans would walk straight into an eternal life in despair, if nothing is done.\n\"\"\"\t"
+                + "\"\"\"\nAll the gods concluded that something had to be done. Somehow the humans had to be saved from their dark destiny. The gods act and picks a random dude that will infiltrate and save the humanity from within.\n\"\"\"\t"
                 + "\"\"\"\nThe chosen one, Ranglon, begins an epic journey to spread love and defeat evil around the world. At the evils nest where the most horrible and evil creature lives, our hero dies. The gods panic and chose a new messenger\n\"\"\"\t"
                 + "\"\"\"\nDud.\n\"\"\"";
     }

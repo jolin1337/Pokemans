@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import projekt.event.Dialogs;
-import projekt.event.EventHandler;
+import projekt.event.GameEventHandler;
 import projekt.event.Keys;
 import render.PFont;
 import render.Player;
@@ -59,6 +59,7 @@ public class Story extends Render{
     ImageIcon[] img = new ImageIcon[]{
         new ImageIcon(getClass().getResource("/res/worlds/world1/layout.png")),
         new ImageIcon(getClass().getResource("/res/worlds/world11/layout.png")),
+        new ImageIcon(getClass().getResource("/res/worlds/world1/layout.png")),
         new ImageIcon(getClass().getResource("/res/worlds/world187/layout.png"))
     };
     
@@ -190,7 +191,7 @@ public class Story extends Render{
         f.add(s);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.show();
-        EventHandler e= new EventHandler();
+        GameEventHandler e= new GameEventHandler();
         f.addKeyListener(e);
         s.addKeyListener(e);
         while(s.running){

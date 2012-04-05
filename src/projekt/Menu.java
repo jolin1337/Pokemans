@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
-import projekt.event.EventHandler;
+import projekt.event.GameEventHandler;
 import projekt.event.Keys;
 import projekt.event.PathAnimator;
 import projekt.story.Story;
@@ -64,7 +64,7 @@ public class Menu extends Render {
             //proj.removeKeyListener(proj.eHandle);
             //java.awt.event.KeyListener[] keyl = null;
             /*if ((keyl = ref.getKeyListeners()).length > 0) {
-                eHandle = (EventHandler) keyl[0];
+                eHandle = (GameEventHandler) keyl[0];
             } else {
                 ref.addKeyListener(eHandle);
             }*/
@@ -84,7 +84,7 @@ public class Menu extends Render {
         }
     }
 
-    public void event(EventHandler eHandle) {
+    public void event(GameEventHandler eHandle) {
         if( !story.running ) {
             if (eHandle.release) {			// gör så att man bara kan ta ett steg i taget
                 if (lvl == 0) // om du är på yttre menyn dvs inte options

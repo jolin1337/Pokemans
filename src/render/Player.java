@@ -159,7 +159,9 @@ public class Player {
     }
 
     public int getItem(int i) {
-        return this.items[i];
+        if(i<this.items.length)
+            return this.items[i];
+        return -1;
     }
 
     public int relplaceItem(int i, int b) {
@@ -501,5 +503,9 @@ public class Player {
 
     public void setRad(int rad) {
         radius=rad;
+    }
+
+    int[] getItems() {
+        return this.items;
     }
 }

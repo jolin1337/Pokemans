@@ -1,12 +1,9 @@
 package projekt;
 
-import com.sun.corba.se.pept.transport.EventHandler;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.KeyboardFocusManager;
 import javax.swing.JApplet;
-import javax.swing.SwingUtilities;
 import projekt.event.Keys;
 import render.Battle;
 import render.Game;

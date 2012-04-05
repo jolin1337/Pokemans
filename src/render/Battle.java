@@ -334,7 +334,12 @@ public class Battle extends Render {
                 actionText = "Attack, you say?";                                    // status medelande med ett vicktigt nyckelord "Attack"
                 break;
             case 1: // Items
-                menuOptions[0] = "HP-POTION";                                       // sätter menyallternativ n
+                String[] s = new String[]{
+                    "HP-POTION",
+                    "HUGGER"
+                };
+                for(int i=getCurrentPlayer().getItems().length;i>0;i--)
+                    menuOptions[i-1] = s[getCurrentPlayer().getItems()[i]];// sätter menyallternativ n
                 menuOptions[1] = "HUGGER";
                 menuOptions[2] = "-";
                 menuOptions[3] = "-";

@@ -14,13 +14,13 @@ import java.awt.event.MouseMotionListener;
  *
  * @author johannes
  */
-public class EventHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener, KeyEventDispatcher {
+public class GameEventHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener, KeyEventDispatcher {
 
     public boolean[] keys = new boolean[65536];
     public boolean release = true;
     public int previus;
 
-    public EventHandler() {
+    public GameEventHandler() {
     }
 
     public void mouseDragged(MouseEvent arg0) {

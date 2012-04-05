@@ -4,7 +4,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import projekt.event.EventHandler;
+import projekt.event.GameEventHandler;
 
 /**
  * Render funktionen är en indirekt använd klass (via Projekt) som gör tillgång till skällva Canvas på JFramen
@@ -33,7 +33,7 @@ public class Render extends Canvas {
 	/**
 	 * eHandle används för tangentnedtryckningar frivillig användning
 	 */
-	public EventHandler eHandle;
+	public GameEventHandler eHandle;
 
 	/**
 	 *  tick används till att kolla om några nertryckningar av användaren är nere(game.tick(e);
@@ -47,7 +47,7 @@ public class Render extends Canvas {
 	 */
 	public Render() {
 		setBackground(Color.black);
-		this.eHandle = new EventHandler();
+		this.eHandle = new GameEventHandler();
 		this.addKeyListener(this.eHandle);
 	}
 
