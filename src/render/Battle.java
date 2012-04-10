@@ -297,7 +297,7 @@ public class Battle extends Render {
                 else if( me.health <= 0 )                                           // kollar om me har dött under slaget
                     exitCode = 1;                                                   // sätter en exitCode(se render.Render) till 1
             }
-            if( actionText.contains("Magic") ){                                    // om spelaren har klickat på attack
+            if( actionText.contains("Magic") ){                                    // om spelaren har klickat på Magic
                 if( menupos >= 0 && menupos < 4 ){                              // om det inte är tackle vi har angivit så blir det denna formell som avgör dmg på motståndaren
                                                                                     // dmg är variabeln som blir så mycket skada som spelaren tar
                     int dmg = (int)(Math.random()*getCurrentPlayer().damages.getDamageParam(4)*getCurrentPlayer().magicAbe/getCurrentPlayerInverse().magicAbe);
@@ -314,10 +314,13 @@ public class Battle extends Render {
                 else if( me.health <= 0 )                                           // kollar om me har dött under slaget
                     exitCode = 1;                                                   // sätter en exitCode(se render.Render) till 1
             }
+            if( actionText.contains("Items") ){                                    // om spelaren har klickat på ett Item
+                System.out.println(menuOptions[menupos]);
+            }
             selection = -1;                                                         // återgå till huvudmenyn
         }
         menupos = 0;                                                                // sätter menupos att peka på första menyallternativet
-        if (selection == -1){                                                       // om vi skall återgå till huvudmenyn
+        if (selection == -1) {                                                       // om vi skall återgå till huvudmenyn
             subMenu = false;                                                        // sätter submenu till false
             menuOptions[0] = "ATTACK";                                              // sätter default värden på huvudmenyn
             menuOptions[1] = "ITEMS";
@@ -338,12 +341,31 @@ public class Battle extends Render {
                     "HP-POTION",
                     "HUGGER"
                 };
-                for(int i=getCurrentPlayer().getItems().length;i>0;i--)
-                    menuOptions[i-1] = s[getCurrentPlayer().getItems()[i]];// sätter menyallternativ n
-                menuOptions[1] = "HUGGER";
+                menuOptions[0] = "-";
+                menuOptions[1] = "-";
                 menuOptions[2] = "-";
                 menuOptions[3] = "-";
-                actionText = "Items, you say?";                                     // status medelande med ett vicktigt nyckelord "Items"
+                int hpCount=0;
+                int i=getCurrentPlayer().getItems().length;
+                for(int j=0;j<i;j++)
+                    if(getCurrentPlayer().getItem(j) == 0 ||    // HP-POITION
+                            getCurrentPlayer().getItem(j) == 1){ // HUGGER
+                        if(getCurrentPlayer().getItem(j) == 1) hpCount++;
+                        String ss = s[getCurrentPlayer().getItem(j)];
+                        if(menuOptions[0].equals("-"))
+                            menuOptions[0] = s[getCurrentPlayer().getItem(j)] + (hpCount>1?hpCount:"");
+                        else if(menuOptions[1].equals("-") && !menuOptions[0].equals(ss))
+                            menuOptions[1] = s[getCurrentPlayer().getItem(j)] + (hpCount>1?hpCount:"");
+                        else if(menuOptions[2].equals("-") && !menuOptions[0].equals(ss) && !menuOptions[1].equals(ss))
+                            menuOptions[2] = s[getCurrentPlayer().getItem(j)] + (hpCount>1?hpCount:"");
+                    }
+                
+                /*menuOptions[1] = "HUGGER";
+                menuOptions[2] = "-";
+                menuOptions[3] = "-";*/
+                if(menuOptions[0].equals("-"))
+                    actionText = "You don't have any Items!";                                     // status medelande med ett vicktigt nyckelord "Items"
+                else actionText = "Items, you say?";                                     // status medelande med ett vicktigt nyckelord "Items"
                 break;
             case 2: // Magic
                 menuOptions[0] = "CURSE";                                           // sätter menyallternativ n

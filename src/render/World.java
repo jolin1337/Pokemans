@@ -206,7 +206,7 @@ public class World implements Cloneable {
      */
     public boolean canGo(int x, int y) {
         int argb = this.getRGBA(x, y).getRGB();
-        return (argb == 0xffffffff) || this.isPoortal(x, y);
+        return true;//return (argb == 0xffffffff) || this.isPoortal(x, y);
     }
 
     public boolean isPoortal(int x, int y) {

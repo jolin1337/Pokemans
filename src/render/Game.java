@@ -220,6 +220,8 @@ public class Game extends Render {
             x=(int) this.focus.x2 / radius + x;
             y=(int) this.focus.y2 / radius + y;
             temp = this.world.getRGBA(x,y);
+            if(temp==null)
+                return false;
         } catch (java.lang.ArrayIndexOutOfBoundsException e) {
             // plockar upp något utanför banans kanter
             return false;
