@@ -117,16 +117,22 @@ public class World implements Cloneable {
                                 (ixy & 0xff) * 20,
                                 radius, 20));
                         p.lvl = cp.getAlpha() -1;
+                        p.bug = cp.getGreen();
                         players.add(p);
                     } else if ( (( ixy >>> 16 ) & 0xff) != 0 ) {
                         Player p = new Player( ix, iy );
                         Color cp = getRGBA(ix, iy); // Colored Player
                         //p.setChar("/res/Players/player" + (ip%2) + ".png");
-                        p.setChar("/res/Players/player" + cp.getBlue() + ".png");
-                        p.lvl = cp.getAlpha() -1;
-                        p.kills = i;
-                        i++;
-                        players.add(p);
+                        try{
+                            p.setChar("/res/Players/player" + cp.getBlue() + ".png");
+                            p.lvl = cp.getAlpha() -1;
+                            p.kills = i;
+                            i++;
+                            players.add(p);
+                        }
+                        catch(NullPointerException e){
+                            return;
+                        }
                     }
                 }
             }

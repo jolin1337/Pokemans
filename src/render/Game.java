@@ -357,29 +357,32 @@ public class Game extends Render {
                 int c = world.alpha.getRGB(127, 24);
                 if(c != 0xffffffff && focus.kills >= 3){
                     Graphics2D ag = this.world.alpha.createGraphics();
-                    ag.setColor(Color.white);
-
-                    ag = this.world.alpha.createGraphics();
                     ag.setColor(new Color(255,255,255, 255));
                     ag.fillRect(127, 24, 12, 1);
+                    for( int i= 0;i < 12; i++)
+                        world.removePlayer(world.getPlayer(127 +i, 24));
                 }
                 c = world.alpha.getRGB(127, 18);
                 if(c != 0xffffffff && focus.kills >= 4 && world.path.contains("world11")){
                     Graphics2D ag = this.world.alpha.createGraphics();
-                    ag.setColor(Color.white);
-
-                    ag = this.world.alpha.createGraphics();
                     ag.setColor(new Color(255,255,255, 255));
                     ag.fillRect(127, 18, 12, 1);
+                    for( int i= 0;i < 12; i++)
+                        world.removePlayer(world.getPlayer(127 +i, 18));
                 }
                 c = world.alpha.getRGB(126, 11);
                 if(c != 0xffffffff && focus.kills >= 5 && world.path.contains("world11")){
                     Graphics2D ag = this.world.alpha.createGraphics();
-                    ag.setColor(Color.white);
-
-                    ag = this.world.alpha.createGraphics();
                     ag.setColor(new Color(255,255,255, 255));
                     ag.fillRect(126, 11, 1, 1);
+                    world.removePlayer(world.getPlayer(126, 11));
+                    
+                }
+            }
+            
+            if(world.path.contains("world21")){
+                if( focus.hasItem(1)){              // hugger
+                    
                 }
             }
         }

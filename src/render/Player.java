@@ -164,6 +164,16 @@ public class Player {
         return -1;
     }
 
+    int[] getItems() {
+        return this.items;
+    }
+
+    boolean hasItem(int j) {
+        for( int i=0;i <items.length;i++)
+            if(items[i]==j)return true;
+        return false;
+    }
+
     public int relplaceItem(int i, int b) {
         int cur = this.items[i];
         this.items[i] = b;
@@ -503,9 +513,5 @@ public class Player {
 
     public void setRad(int rad) {
         radius=rad;
-    }
-
-    int[] getItems() {
-        return this.items;
     }
 }
