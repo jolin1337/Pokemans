@@ -34,7 +34,7 @@ public final class Dialogs {
 
         public static String firstAttack = "Aha, so it is you are the dangerous boy of whom my boss have told me about - You don't seem very dangerous to me, I guess it'll be easier than I thought kicking your ass!\t"
                 + " Do you know how to knock yourself out yet No Oh, well.. I'll give you a helping hand! Muhaahah!\t"
-                + " Well lets get on with it, shall we? ";
+                + " Well lets get on with it, shall we?";
     }
     public static final String[] itemDialog = new String[]{
         "This is an item."
