@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import primitives.House;
@@ -206,16 +208,21 @@ public class World implements Cloneable {
      */
     public boolean canGo(int x, int y) {
         int argb = this.getRGBA(x, y).getRGB();
-        return true;//return (argb == 0xffffffff) || this.isPoortal(x, y);
+        return (argb == 0xffffffff) || this.isPoortal(x, y);
     }
 
     public boolean isPoortal(int x, int y) {
-        int rgb=this.getRGBA(x, y).getRGB();
-        if ( rgb != 0xffffffff && rgb != 0xff000000 && this.getRGBA(x, y).getAlpha() == 254 ) {
-            this.pos[0] = this.getRGBA(x, y).getGreen();//x
-            this.pos[1] = this.getRGBA(x, y).getBlue(); //y
-            this.pos[2] = this.getRGBA(x, y).getRed();//world number
-            return true;
+        try{
+            int rgb=this.getRGBA(x, y).getRGB();
+            if ( rgb != 0xffffffff && rgb != 0xff000000 && this.getRGBA(x, y).getAlpha() == 254 ) {
+                this.pos[0] = this.getRGBA(x, y).getGreen();//x
+                this.pos[1] = this.getRGBA(x, y).getBlue(); //y
+                this.pos[2] = this.getRGBA(x, y).getRed();//world number
+                return true;
+            }
+        }catch(NullPointerException e){
+            System.out.print("jfdia");
+            this.getRGBA(x, y);
         }
         return false;
     }
@@ -247,7 +254,8 @@ public class World implements Cloneable {
 
     public Color getRGBA(int x, int y) {
         try{
-            int pixelCol = this.alpha.getRGB(x, y);
+            int width=alpha.getWidth();
+            int pixelCol = ((DataBufferInt) alpha.getRaster().getDataBuffer()).getData()[(width*y + x)];//this.alpha.getRGB(x, y);
             return new Color(
                     (pixelCol >>> 16) & 0xff,
                     (pixelCol >>> 8) & 0xff,
