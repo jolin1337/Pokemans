@@ -182,22 +182,4 @@ public class Story extends Render{
             props.paint(g);
         }
     }
-    
-    public static void main(String[] args) {
-        JFrame f=new JFrame("Pokemans - Story");
-        Story s = new Story();
-        f.setBounds(0, 0, s.WIDTH, s.HEIGHT);
-        f.setResizable(false);
-        f.add(s);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.show();
-        GameEventHandler e= new GameEventHandler();
-        f.addKeyListener(e);
-        s.addKeyListener(e);
-        while(s.running){
-            s.tick(e.keys);
-            s.repaint();
-        }
-        f.dispose();
-    }
 }
