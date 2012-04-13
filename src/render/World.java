@@ -131,7 +131,6 @@ public class World implements Cloneable {
                             players.add(p);
                         }
                         catch(NullPointerException e){
-                            return;
                         }
                     }
                 }
