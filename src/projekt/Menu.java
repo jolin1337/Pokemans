@@ -258,7 +258,7 @@ public class Menu extends Render {
                 g.setColor(new Color(0xFFFDD0));
                 g.fillRect(x - 25, y - 20, 340, 120);
 
-                pf.SetString("TUTORIAL TEXT HERE!!!!").PrintAt(g, x, y);
+                pf.SetString("Press the arrow keys (Up, down, left & right) to move accordingly.\nInteract with items and people with the Z-key.\nAlso there's a back key, X, which you can use in case of need.\n\nIn case of severe rage, Esc will allow you to rage quit.").PrintAt(g, x, y); //Text till tutorial 
             } else if (lvl == 2) {
                 innerMax = 2;
 

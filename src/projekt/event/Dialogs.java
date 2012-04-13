@@ -10,22 +10,22 @@ public final class Dialogs {
 
     public static final class Story {
 
-        public static final String story1 = "message. \"\"\"\n The gods realized in 1893 that the humans had lost their faith in a superior power. As the future could see into the future, the humans would walk straight into an eternal life in despair, if nothing is done.\n\"\"\"\t"
-                + "\"\"\"\nAll the gods concluded that something had to be done. Somehow the humans had to be saved from their dark destiny. The gods act and picks a random dude that will infiltrate and save the humanity from within.\n\"\"\"\t"
-                + "\"\"\"\nThe chosen one, Ranglon, begins an epic journey to spread love and defeat evil around the world. At the evils nest where the most horrible and evil creature lives, our hero dies. The gods panic and chose a new messenger\n\"\"\"\t"
-                + "\"\"\"\nDud.\n\"\"\"";
+        public static final String story1 = "The following is a message from the Gods almighty$\n The gods realized in 1893 that the humans had lost their faith in a superior power. As the future could see into the future, the humans would walk straight into an eternal life in despair, if nothing is done.\n\t"
+                + "\nAll the gods concluded that something had to be done. Somehow the humans had to be saved from their dark destiny. The gods act and picks a random dude that will infiltrate and save the humanity from within.\n\t"
+                + "\nThe chosen one, Ranglon, begins an epic journey to spread love and defeat evil around the world. At the evils nest where the most horrible and evil creature lives, our hero dies. The gods panic and chose a new messenger\n\t"
+                + "\nDud.\n";
     }
 
     public static final class main {
         public static String wellcomeDude = "Welcome to the world of Pokèmans! You will find amazing things and explore extremely dangerous dungeons of chaos...\t"
-                + "Remember that all of the worlds evil lurks in the dark dungeon. You will probably die just as your precedor...\t"
+                + "Remember that all of the worlds evil lurks in the dark dungeon. You will probably die just as your predecessor...\t"
                 + "Now go! Explore the dungeons if you dare.. the entrance is over there.";
-        public static String dungeonEntryDude = "Welcome to the dangerous dungeon. When you get attacked you will have to fight back, otherwise you will die and rot.\t"
+        public static String dungeonEntryDude = "Welcome to the dangerous dungeon. When you get attacked you will have to fight back otherwise you will die.\t"
                 + " Your first opponent awaits up ahead!";
         public static String[] hellper = new String[]{
-            "Hello there, young Dud! I have been tracking your progress, you are doing well. When you finally have come this far there is yet more evil to defeat. \t"
-            + "Further away there is a passage of which you cannot pass. To be able to walk through the passage you will have to defeat all the enemies in the current dungeon."
-            + "Only then you'll be able to pass the barrier continue your journey. Good luck."
+            "Hello there, young Dud! I have been tracking your progress and you are doing well. When you finally have come this far there is yet more evil to defeat. \t"
+            + "Further away there is a passage of which you cannot pass. To be able to walk through the passage you will have to defeat all the enemies in the current area."
+            + "Only then you'll be able to pass the barrier and continue your journey. Good luck."
         };
     }
 
@@ -33,17 +33,17 @@ public final class Dialogs {
         public static String defeatedEnemy = "H-how is it possible..? You won...\n I am worthless.";
 
         public static String firstAttack = "Aha, so it is you are the dangerous boy of whom my boss have told me about - You don't seem very dangerous to me, I guess it'll be easier than I thought kicking your ass!\t"
-                + " Do you know how to knock yourself yet-\n What an amateur you are come here so I can kick you!\t"
-                + " Well lets get on with it, shall we-";
+                + " Do you know how to knock yourself out yet?\n No? Oh, well.. I'll give you a helping hand! Muhaahah!\t"
+                + " Well lets get on with it, shall we?";
     }
     public static final String[] itemDialog = new String[]{
-        "Only item is here!"
+        "This is an item."
     };
     public static final String[] characterDialog = new String[]{
         Dialogs.main.dungeonEntryDude, // en annan välkommnare som står innanför porten innuti huset(world11)
         Dialogs.EnemyCalls.firstAttack, // en enkel strid som attakerar en så fort man kommer nära (obs inga frågetecken: ?)
         Dialogs.main.hellper[0], // berättar om barriärer
-        "Evil3",
+        "Evil3", //Byt namn på karaktärer
         "Good4",
         "Evil5",
         "Good6",
@@ -56,7 +56,7 @@ public final class Dialogs {
         "Evil13",
         Dialogs.main.wellcomeDude, // in lvl world1(intro dude)
         "Evil15",
-        "                - Outpost Coverage -\nHere we will protect you from the outer world and patch you up when you get hurt."
+        "                - Outpost Coverage -\nHere you are protected from the outer world and can get patched up if you are hurt."
     };
     public static boolean endof = true;
     public static String[] message;
