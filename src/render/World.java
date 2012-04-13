@@ -85,7 +85,7 @@ public class World implements Cloneable {
         this.overlay = new ImageIcon(getClass().getResource(this.path + "/overlay.png"));
 
         System.out.println("graphics loaded.");
-        temp = new ImageIcon(getClass().getResource(this.path + "/graphics.png"));
+        temp = new ImageIcon(getClass().getResource("/res/worlds/graphics.png"));
         this.grafik = new BufferedImage(temp.getIconWidth(), temp.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         this.grafik.getGraphics().drawImage(temp.getImage(), 0, 0, null);
 
