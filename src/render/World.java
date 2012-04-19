@@ -11,6 +11,7 @@ import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import primitives.House;
+import projekt.event.Dialogs;
 import projekt.event.Keys;
 
 /**
@@ -127,6 +128,7 @@ public class World implements Cloneable {
                             p.setChar("/res/Players/player" + cp.getBlue() + ".png");
                             p.lvl = cp.getAlpha() -1;
                             p.kills = i;
+                            p.name = Dialogs.names[(int)((Math.random())*100%Dialogs.names.length)];
                             i++;
                             players.add(p);
                         }
