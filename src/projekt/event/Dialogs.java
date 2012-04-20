@@ -60,6 +60,13 @@ public final class Dialogs {
     };
     public static boolean endof = true;
     public static String[] message;
+    public static String[] names = new String[]{
+        "Tor",
+        "Frej",
+        "Oden",
+        "Thorn",
+        "ASSA"
+    };
 
     public static void initDialog(String mes) {
         //if(Dialogs.message.length >MAXMESSAGELENGTH)
