@@ -113,6 +113,36 @@ public class Game extends Render {
         if (delay >= radius) {
             this.focus.frame = 0;
         }
+        
+        // bush in the face, pick sheet
+        if(world.path.contains("world21") && a){
+            if( focus.hasItem(1) ){              // hugger
+                int x = -1, y=-1;
+                if(focus.direciton == 1 && focus.x == 26 && focus.y == 7){
+                    x = focus.x-1;
+                    y = focus.y;
+                }
+                else if(focus.direciton == 2 && focus.x == 28 && focus.y == 7){
+                    x = focus.x + 1;
+                    y = focus.y;
+                }
+                if(x!=-1 && y!=-1){
+                    Graphics2D ag = this.world.alpha.createGraphics();
+                    ag.setColor(new Color(255,255,255, 255));
+                    ag.fillRect(x, y, 1, 1);
+                    Player p = world.getPlayer(x, y);
+                    Dialogs.itemDialog[p.bug] = "You cut the tree.";
+                    world.removePlayer(p);
+                }
+            }
+            else {
+                if(focus.direciton == 1 && focus.x == 26 && focus.y == 7 || focus.direciton == 2 && focus.x == 28 && focus.y == 7){
+                    Player p = world.getPlayer(25, 7);
+                    Dialogs.itemDialog[p.bug] = "Looks like you can cut here.";
+                }
+            }
+        }
+        
         //**** pickup ****//
         if (a) {
             if (Dialogs.endof && this.preformAction(false)) {
@@ -183,7 +213,7 @@ public class Game extends Render {
                 //focus.direciton = 0;
             }
         }
-        
+           
         if( select ){
             paintProps=!paintProps;
             props.hasManipualted=false;
@@ -231,25 +261,25 @@ public class Game extends Render {
             if (Dialogs.endof && !pickNow) {
                 this.focus.action = "dialog";
                 Player p = this.world.getPlayer(x, y);
-                this.world.removePlayer(p);
-                Dialogs.initDialog("\t"+Dialogs.itemDialog[p.lvl]);
-                this.focus.freeze = true;
+                Dialogs.initDialog("\t"+Dialogs.itemDialog[p.bug].split("/")[0]);
             }
             if (!pickNow) {
                 return true;
             }
-            Graphics2D ag = this.world.alpha.createGraphics();
-            ag.setColor(Color.white);
-            ag.fillRect(x, y, 1, 1);
-
-            int b = temp.getBlue();
-            if (b != 0) {
-                this.focus.addItem(b);
-            }
             Player p = this.world.getPlayer(x, y);
-            if(p.log.isEmpty())
-                p.log="hide";
-            else p.log += " hide";
+            if( p.lvl < 2 ){
+                Graphics2D ag = this.world.alpha.createGraphics();
+                ag.setColor(Color.white);
+                ag.fillRect(x, y, 1, 1);
+
+                int b = temp.getBlue();
+                if (b != 0) {
+                    this.focus.addItem(b);
+                }
+                if(p.log.isEmpty())
+                    p.log="hide";
+                else p.log += " hide";
+            }
             return true;
         } else if (temp.getRed() != 0 && !this.world.isPoortal(x,y) && !this.world.isWorldRise(x, y)
                 && !(temp.equals(new Color(0xff000000)) || temp.equals(new Color(0xffffffff)))) {		// omPlayer
@@ -272,7 +302,7 @@ public class Game extends Render {
                         Dialogs.initDialog("\t"+Dialogs.characterDialog[currentFightingOp.lvl]);
                     else{
                         this.focus.action = "dialog";
-                        Dialogs.initDialog("\t"+Dialogs.EnemyCalls.defeatedEnemy);
+                        Dialogs.initDialog("\t"+Dialogs.EnemyCalls.defeatedEnemy[currentFightingOp.kills]);
                     }
                 }catch(IndexOutOfBoundsException e){
                     Dialogs.endof=true;
@@ -353,7 +383,7 @@ public class Game extends Render {
             catch(ArrayIndexOutOfBoundsException ex) {}
         }
         try{// unloking the wall levels
-            if(world.path.contains("world11")){
+            if(world.path.contains("world11")){ // TODO: temporär lösning!!!
                 int c = world.alpha.getRGB(127, 24);
                 if(c != 0xffffffff && focus.kills >= 3){
                     Graphics2D ag = this.world.alpha.createGraphics();
@@ -376,12 +406,6 @@ public class Game extends Render {
                     ag.setColor(new Color(255,255,255, 255));
                     ag.fillRect(126, 11, 1, 1);
                     world.removePlayer(world.getPlayer(126, 11));
-                    
-                }
-            }
-            
-            if(world.path.contains("world21")){
-                if( focus.hasItem(1)){              // hugger
                     
                 }
             }

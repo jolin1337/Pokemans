@@ -449,7 +449,7 @@ public class Player {
     void drawChar(Graphics g, int x, int y, int width, int height, ImageObserver o) {
             frame %= 3;
             BufferedImage t;
-                
+            
             int innerheight = c.getHeight() / 4;
             int innerwidth = c.getWidth() / 3;
             boolean small = innerheight < 10;
@@ -472,7 +472,7 @@ public class Player {
             }catch(Exception e){
                 t = c.getSubimage( 0, 0, c.getWidth(), c.getHeight() );
             }
-            g.drawImage(t, (int)(WIDTH / 2 - radius / 2 + radius/2 - 1.5), (int)(HEIGHT / 2 - 4 + 1.5), radius + 3, (int)(((double)height / (double)width) * radius) + 3, null);
+            g.drawImage(t, (int)(WIDTH / 2 - radius / 2 + radius/2 ), (int)(HEIGHT / 2 - 4 ), radius , (int)(((double)height / (double)width) * radius), null);
 
             //g.drawImage(t, (int)x2, (int)y2-(t.getHeight() == 16?0:7), null);
     }

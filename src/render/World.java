@@ -92,7 +92,6 @@ public class World implements Cloneable {
 
         System.out.println("alpha loaded.");
         temp = new ImageIcon(getClass().getResource(this.path + "/alpha.png"));
-        //System.out.println(temp.toString());
         this.alpha = new BufferedImage(temp.getIconWidth(), temp.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         gr = this.alpha.getGraphics();
         gr.drawImage(temp.getImage(), 0, 0, null);
@@ -114,25 +113,29 @@ public class World implements Cloneable {
                         Color cp = getRGBA(ix, iy); // Colored Player
                         //p.setChar("/res/Players/player" + (ip%2) + ".png");
                         p.setChar(this.grafik.getSubimage(
-                                ((ixy >>> 8) & 0xff) * radius,
-                                (ixy & 0xff) * 20,
+                                ((ixy & 0xff)%this.grafik.getWidth()) * radius,
+                                (int)((ixy & 0xff)/this.grafik.getWidth() + 0.5) * 20,
                                 radius, 20));
-                        p.lvl = cp.getAlpha() -1;
+                        p.lvl = cp.getBlue();
                         p.bug = cp.getGreen();
                         players.add(p);
                     } else if ( (( ixy >>> 16 ) & 0xff) != 0 ) {
                         Player p = new Player( ix, iy );
                         Color cp = getRGBA(ix, iy); // Colored Player
-                        //p.setChar("/res/Players/player" + (ip%2) + ".png");
                         try{
                             p.setChar("/res/Players/player" + cp.getBlue() + ".png");
-                            p.lvl = cp.getAlpha() -1;
+                            p.lvl = cp.getGreen() -1;
                             p.kills = i;
-                            p.name = Dialogs.names[(int)((Math.random())*100%Dialogs.names.length)];
+                            if(Dialogs.names.length > i)
+                                p.name = Dialogs.names[i];
+                            else 
+                                p.name = Dialogs.names[(int)((Math.random())*100%Dialogs.names.length)];
                             i++;
                             players.add(p);
                         }
                         catch(NullPointerException e){
+                            System.out.println("The player with id: " + cp.getBlue() + ", could not be found!");
+                            System.exit(1);
                         }
                     }
                 }
@@ -262,7 +265,8 @@ public class World implements Cloneable {
     public Color getRGBA(int x, int y) {
         try{
             int width=alpha.getWidth();
-            int pixelCol = ((DataBufferInt) alpha.getRaster().getDataBuffer()).getData()[(width*y + x)];//this.alpha.getRGB(x, y);
+            int pixelCol = this.alpha.getRGB(x, y);
+            //int pixelCol = ((DataBufferInt) alpha.getRaster().getDataBuffer()).getData()[(width*y + x)];//this.alpha.getRGB(x, y);
             return new Color(
                     (pixelCol >>> 16) & 0xff,
                     (pixelCol >>> 8) & 0xff,
@@ -354,9 +358,8 @@ public class World implements Cloneable {
 
     public Player getPlayer(int x, int y) {
         int cur = 0;
-        int xy = getRGBA(x, y).getRGB();
         for(Player p : players){
-            if(p.lvl == getRGBA(x, y).getAlpha() -1)
+            if(p.x == x && p.y == y)
                 return p;
             cur++;
         }

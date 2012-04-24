@@ -271,6 +271,7 @@ public class Battle extends Render {
      * @param selection avgör vilket menyallternativ som spelaren har valt
      */
     void Action(int selection){
+        you.health = -1;
         if (subMenu && selection!=-1) {                                             // om vi är i en submeny och vi inte klickar 'b'
             if( actionText.contains("Attack") ){                                    // om spelaren har klickat på attack
                 if( menupos == 0 ){                                                 // TACKLE ( använder )
