@@ -138,15 +138,15 @@ public class Story extends Render{
             g.drawImage(img[step_in_story].getImage(), 100, 0, null);
             g.setColor(new Color(0,0,0,200));
             g.fillRect(0, 0, WIDTH, HEIGHT);
-            g.fillRect(0, HEIGHT/2 - 200/2 + 10, time -20, 190);
+            g.fillRect(0, HEIGHT/2 - 200/2 + 10, time -20, 210);
             g.setColor(new Color(0,240,0,20));
-            g.fillRect(0, HEIGHT/2 - 200/2 + 10, time -20, 190);
+            g.fillRect(0, HEIGHT/2 - 200/2 + 10, time -20, 210);
             for(int i=245;i < time*10;i+=10){
                 if(i>= 255 * 10) 
                     g.setColor(new Color(255, 255 - 20,0,200));
                 else
                     g.setColor(new Color(i/10,i/10 - 20,0,200));
-                g.fillRect((i-240)/10, HEIGHT/2 - 200/2 +20, 1,170);
+                g.fillRect((i-240)/10, HEIGHT/2 - 200/2 +20, 1,190);
             }
             //g.drawString(">", 30,  20 + HEIGHT - (int)((time + 100)*(Math.sin(time/2*Math.PI/180))));
             int y=18 + HEIGHT - (int)((time + 100)*(Math.sin(time/2*Math.PI/180)));

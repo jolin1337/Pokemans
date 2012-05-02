@@ -226,9 +226,10 @@ public class Battle extends Render {
         you.drawChar(g, getWidth() - 170, 20, 100, 100, this);
         you.direciton = temp_direkt;
         
-        if( __transition.index > 0 ) {
+        if( __transition.index > 0 )
             __transition.Transitions[getCurrentTransition()].animate(g);
-        }
+        else if(!subMenu)
+            actionText = "What will "+getCurrentPlayer().name+" do?";               // återställer status medelandet
         
         //Statusmenu + Actionmenu
         g.setColor(blk);                                            // sätt färjen till "svart"
@@ -271,7 +272,6 @@ public class Battle extends Render {
      * @param selection avgör vilket menyallternativ som spelaren har valt
      */
     void Action(int selection){
-        you.health = -1;
         if (subMenu && selection!=-1) {                                             // om vi är i en submeny och vi inte klickar 'b'
             if( actionText.contains("Attack") ){                                    // om spelaren har klickat på attack
                 if( menupos == 0 ){                                                 // TACKLE ( använder )
@@ -327,7 +327,6 @@ public class Battle extends Render {
             menuOptions[1] = "ITEMS";
             menuOptions[2] = "MAGIC";
             menuOptions[3] = "RUN";
-            actionText = "What will "+getCurrentPlayer().name+" do?";               // återställer status medelandet
             return;                                                                 // avbryter action
         }
         subMenu= true;                                                              // nu kommer vi in i en subbmeny

@@ -93,8 +93,31 @@ public final class Dialogs {
         "Tor",
         "Frej",
         "Oden",
-        "Thorn",
-        "ASSA"
+        "ASSA",
+        "Honeos",
+        "Essoos",
+        "Lyros",
+        "Ramios",
+        "Belytia",
+        "Nybaos",
+        "Assajask",
+        "Sundiman",
+        "Lisadar",
+        "Lypim",
+        "Popy",
+        "Jil",
+        "Adon",
+        "Toraom",
+        "Adon",
+        "Tepad",
+        "Irun",
+        "Winar",
+        "Yhino",
+        "Denn",
+        "Belr",
+        "Loul",
+        "Queech",
+        "Thorn"
     };
 
     public static void initDialog(String mes) {

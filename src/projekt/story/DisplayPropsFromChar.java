@@ -99,8 +99,8 @@ public final class DisplayPropsFromChar {
         drawTexts.SetColor("Black").SetString("XP, "+Char.kills*100).PrintAt(g, Char.x + 80, Char.y + 40);
         
         if( !hasManipualted && gameEnabled ){
-            drawTexts.SetColor("white").SetString("Manipulate").PrintAt(g, Char.x - drawTexts.getStringLength()/2, Char.y + 100);
-            drawTexts.SetColor("red").SetString("\"press a\"").PrintAt(g, Char.x - drawTexts.getStringLength()/2 + 70, Char.y + 100);
+            drawTexts.SetColor("white").SetString("Spend attr points").PrintAt(g, Char.x - drawTexts.getStringLength()/2, Char.y + 100);
+            drawTexts.SetColor("red").SetString("\"press a\"").PrintAt(g, Char.x - drawTexts.getStringLength()/2 + 150, Char.y + 100);
         }
         else if(gameEnabled){
             int[] curpos[] = {new int[]{Char.x - 160, Char.y}, new int[]{Char.x - 160, Char.y + 40}, new int[]{Char.x + 60, Char.y}, new int[]{Char.x + 60, Char.y + 40}};
@@ -108,7 +108,7 @@ public final class DisplayPropsFromChar {
             
             drawTexts.SetColor("white").SetString("Use: ").PrintAt(g, Char.x - 140, Char.y + 100);
             drawTexts.SetColor("red").SetString("arrow keys").PrintAt(g, Char.x - 110, Char.y + 100);
-            drawTexts.SetColor("white").SetString("to manipulate the players stats").PrintAt(g, Char.x - 30, Char.y + 100);
+            drawTexts.SetColor("white").SetString("to spend dud's points").PrintAt(g, Char.x - 30, Char.y + 100);
             
             if(Char.kills > 0)
                 drawTexts.SetColor("black").SetString("You have " + Char.kills +  " points left to spend").PrintAt(g, Char.x - 110, Char.y + 120);
